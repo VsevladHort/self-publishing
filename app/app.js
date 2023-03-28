@@ -68,6 +68,22 @@ const requireNotLoggedIn = (req, res, next) => {
     next();
 }
 
+const requireAuthorship = async (req, res, next) => {
+    const book = await bookService.getById(parseInt(req.params.id));
+    if (!req.session.user) {
+        return res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: false,
+            problem: 'Only logged in users may view this content!'
+        })
+    } else if (req.session.user.id_user !== book.author) {
+        return res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: req.session.user,
+            problem: 'Only author of the book is allowed to do this!'
+        })
+    }
+    next();
+}
+
 app.get("/", async function (req, res) {
     let page = parseInt(req.query.page);
     if (!page || page <= 0)
@@ -220,6 +236,64 @@ app.get('/book/:id', async (req, res) => {
         res.render(path.join(__dirname, 'views/error.ejs'), {
             user: req.session.user,
             problem: "Something went wrong, the book may not exist =("
+        });
+    }
+});
+
+app.get('/book/:id/edit', requireAuthorship, async (req, res) => {
+    const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
+    if (book) {
+        res.render(path.join(__dirname, 'views/edit_book.ejs'), {
+            user: req.session.user,
+            problem: false,
+            book: book
+        });
+    } else {
+        res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: req.session.user,
+            problem: "Something went wrong, the book may not exist =("
+        });
+    }
+});
+
+app.post('/book/:id/edit', requireAuthorship, async (req, res) => {
+    const hasWorkedEdit = await bookService.edit(parseInt(req.params.id), req.body.title)
+    const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
+    if (hasWorkedEdit) {
+        res.render(path.join(__dirname, 'views/edit_book.ejs'), {
+            user: req.session.user,
+            problem: false,
+            book: book
+        });
+    } else {
+        res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: req.session.user,
+            problem: "Something went wrong, the book may not exist =("
+        });
+    }
+});
+
+app.get('/book/:id/delete', requireAuthorship, async (req, res) => {
+    const {sure} = req.query;
+    if (sure === 'yes') {
+        const deleted = await bookService.deleteBook(parseInt(req.params.id));
+        if (deleted) {
+            res.render(path.join(__dirname, 'views/error.ejs'), {
+                user: req.session.user,
+                problem: "Your book has been deleted successfully."
+            });
+        } else {
+            res.render(path.join(__dirname, 'views/error.ejs'), {
+                user: req.session.user,
+                problem: "There was a problem deleting your book =("
+            });
+        }
+    } else {
+        res.render(path.join(__dirname, 'views/delete_confirmation.ejs'), {
+            user: req.session.user,
+            urlToGoBack: `/book/${req.params.id}/edit`,
+            urlToProceed: `/book/${req.params.id}/delete?sure=yes`,
+            problem: "Are you sure you want to delete this book?"
         });
     }
 });

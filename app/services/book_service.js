@@ -34,4 +34,21 @@ const getByIdForDisplay = async function (id) {
     return book;
 };
 
-module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay}
+const edit = async function (id, title) {
+    let book = await bookDAO.getById(id);
+    if (book) {
+        book.book_title = title;
+        return await bookDAO.update(book);
+    }
+    return book;
+};
+
+const deleteBook = async function (id) {
+    let book = await bookDAO.getById(id);
+    if (book) {
+        return await bookDAO.deleteById(id);
+    }
+    return book;
+};
+
+module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay, edit, deleteBook}
