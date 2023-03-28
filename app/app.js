@@ -69,9 +69,16 @@ const requireNotLoggedIn = (req, res, next) => {
 }
 
 app.get("/", async function (req, res) {
+    let page = parseInt(req.query.page);
+    if (!page || page <= 0)
+        page = 1;
+    let books = await bookService.getAllForHomePage(10, page);
     res.render(path.join(__dirname, 'views/home.ejs'), {
         user: req.session.user,
-        problem: false
+        problem: false,
+        books: books,
+        prevPage: page - 1,
+        nextPage: page + 1
     });
 });
 
