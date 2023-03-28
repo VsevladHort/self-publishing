@@ -5,7 +5,7 @@ const dotenv = require('dotenv').config();
 class UserDAO {
     getById(id) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('SELECT id_user, pass_hash, role, user_email, user_name, banned FROM user WHERE user_id = ?;',
+            connectionPool.query('SELECT id_user, pass_hash, role, user_email, user_name, banned FROM user WHERE id_user = ?;',
                 id,
                 (error, result) => {
                     if (error) {
@@ -30,6 +30,20 @@ class UserDAO {
                         resolve(null);
                     } else {
                         resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    deleteById(id) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('DELETE FROM user WHERE id_user = ?;',
+                id,
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
                     }
                 });
         });
@@ -67,27 +81,28 @@ class UserDAO {
 
     async update(user) {
         if (user.pass_hash) {
-            let hash = await bcrypt.hash(user.pass_hash, process.env.SALT_ROUNDS);
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(user.pass_hash, salt);
             return new Promise((resolve, reject) => {
-                connectionPool.query('UPDATE users SET pass_hash = ?, role = ?, user_email = ?, user_name = ?, banned = ? WHERE id_user = ?;',
+                connectionPool.query('UPDATE user SET pass_hash = ?, role = ?, user_email = ?, user_name = ?, banned = ? WHERE id_user = ?;',
                     [hash, user.role, user.user_email, user.user_name, user.banned, user.id_user],
                     (error, result) => {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(result.insertId);
+                            resolve(result.affectedRows);
                         }
                     });
             });
         } else {
             return new Promise((resolve, reject) => {
-                connectionPool.query('UPDATE users SET role = ?, user_email = ?, user_name = ?, banned = ? WHERE id_user = ?;',
+                connectionPool.query('UPDATE user SET role = ?, user_email = ?, user_name = ?, banned = ? WHERE id_user = ?;',
                     [user.role, user.user_email, user.user_name, user.banned, user.id_user],
                     (error, result) => {
                         if (error) {
                             reject(error);
                         } else {
-                            resolve(result.insertId);
+                            resolve(result.affectedRows);
                         }
                     });
             });

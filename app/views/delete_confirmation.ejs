@@ -14,6 +14,7 @@
         <a class="nav-link" href="/login">Login</a>
     <% } %>
     <% if (user) { %>
+        <a class="nav-link" href="/profile">Profile</a>
         <a class="nav-link" href="/logout">Logout</a>
     <% } %>
 </nav>
@@ -22,26 +23,17 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    Login
+                    Are you sure you want to delete this resource?
                 </div>
                 <div class="card-body">
-                    <form method="post">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email"
-                                   placeholder="Enter your email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Enter your password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </form>
                     <% if (problem) { %>
-                        <div class="alert alert-danger" role="alert">
-                            <%= problem %>
-                        </div>
+                        <p><%= problem %></p>
+                    <% } %>
+                    <% if (urlToGoBack) { %>
+                        <a class="btn btn-primary" href="<%= urlToGoBack %>">Go Back</a>
+                    <% } %>
+                    <% if (urlToProceed) { %>
+                        <a class="btn btn-primary" href="<%= urlToProceed %>">Confirm</a>
                     <% } %>
                 </div>
             </div>
