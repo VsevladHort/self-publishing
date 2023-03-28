@@ -206,8 +206,26 @@ app.post('/publish', requireNotBanned, async (req, res) => {
     }
 });
 
+app.get('/book/:id', async (req, res) => {
+    const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
+    if (book) {
+        res.render(path.join(__dirname, 'views/book_view.ejs'), {
+            user: req.session.user,
+            problem: false,
+            book: book,
+            reviews: [],
+            chapters: []
+        });
+    } else {
+        res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: req.session.user,
+            problem: "Something went wrong, the book may not exist =("
+        });
+    }
+});
+
 app.get('/moderator', requireModerator, async (req, res) => {
     res.send(`${req.session.user} + <a href="/logout"> Logout</a>`);
 });
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+app.listen(port, () => console.log(`Localhost link: http://localhost:${port}/`));

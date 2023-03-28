@@ -22,4 +22,15 @@ const getAllForHomePage = async function (numPerPage, numOfPage) {
     return booksWithAuthorNames;
 };
 
-module.exports = {publish, getAllForHomePage}
+const getById = async function (id) {
+    return await bookDAO.getById(id);
+};
+
+const getByIdForDisplay = async function (id) {
+    let book = await bookDAO.getById(id);
+    const author = await userDAO.getById(book.author);
+    book.author = `${author.user_name}#${author.id_user}`;
+    return book;
+};
+
+module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay}
