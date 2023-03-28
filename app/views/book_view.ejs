@@ -19,7 +19,7 @@
     <div class="container">
         <h1>Book Details</h1>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <h2><%= book.book_title %></h2>
                 <p>By <%= book.author %></p>
                 <p>Rating: <%= book.avg_score %></p>
@@ -30,6 +30,11 @@
                         <li><a href="/chapter/<%= chapter.id_chapter %>"><%= chapter.chapter_title %></a></li>
                     <% }); %>
                 </ul>
+                <% if (user && user.id_user === book.authorId) { %>
+                    <a href=<%= `/book/${book.id_book}/publish` %>>
+                        <button class="btn btn-primary">Publish new chapter</button>
+                    </a>
+                <% } %>
                 <hr>
                 <h3>Reviews</h3>
                 <% reviews.forEach(function(review) { %>
@@ -43,15 +48,21 @@
                     </div>
                 <% }); %>
             </div>
-<!--            <div class="col-md-4">-->
-<!--                <img src="https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png"-->
-<!--                     alt="<%= book.book_title %> cover" class="img-fluid">-->
-<!--            </div>-->
+            <div class="col-md-4">
+                <!--                <img src="https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png"-->
+                <!--                     alt="<%= book.book_title %> cover" class="img-fluid">-->
+                <br><br>
+                <% if (user && user.id_user === book.authorId) { %>
+                    <a href=<%= `/book/${book.id_book}/edit` %>>
+                        <button class="btn btn-primary">Edit book</button>
+                    </a>
+                <% } %>
+            </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 </html>

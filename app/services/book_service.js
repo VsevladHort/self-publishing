@@ -30,6 +30,7 @@ const getByIdForDisplay = async function (id) {
     let book = await bookDAO.getById(id);
     const author = await userDAO.getById(book.author);
     book.author = `${author.user_name}#${author.id_user}`;
+    book.authorId = author.id_user;
     return book;
 };
 
