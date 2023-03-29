@@ -14,10 +14,7 @@
 </nav>
 
 <div class="container mt-5">
-    <div id="message" class="alert alert-primary" role="alert">
-        <img src="/views/svg/x.svg" alt="close icon">
-        <span id="msg_msg"></span>
-    </div>
+    <%- include('shared/alert.ejs') %>
     <% if (!chapter) { %>
         <label for="title">Title of your chapter: </label>
         <input type="text" value="" id="title">

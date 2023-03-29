@@ -2,6 +2,8 @@ const bookModel = require('../dao/book_dao');
 const userModel = require('../dao/user_dao');
 const bookDAO = new bookModel();
 const userDAO = new userModel();
+const chapterService = require('../services/chapter_service')
+const defaultChapterNum = 10;
 
 const publish = async function (book) {
     const id = await bookDAO.create({
@@ -9,6 +11,10 @@ const publish = async function (book) {
         book_title: book.book_title
     });
     return await bookDAO.getById(id);
+};
+
+const getChapterList = async function (id_book, page) {
+    return await chapterService.getChaptersForBook(id_book, defaultChapterNum, page);
 };
 
 const getAllForHomePage = async function (numPerPage, numOfPage) {
@@ -51,4 +57,4 @@ const deleteBook = async function (id) {
     return book;
 };
 
-module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay, edit, deleteBook}
+module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay, edit, deleteBook, getChapterList}

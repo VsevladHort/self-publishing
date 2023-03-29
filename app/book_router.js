@@ -7,13 +7,18 @@ const app = express.Router();
 
 app.get('/book/:id', async (req, res) => {
     const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
+    let page = parseInt(req.query.page);
+    if (!page || page <= 0)
+        page = 1;
     if (book) {
         res.render(path.join(__dirname, 'views/book_view.ejs'), {
             user: req.session.user,
             problem: false,
             book: book,
             reviews: [],
-            chapters: []
+            chapters: await bookService.getChapterList(book.id_book, 1),
+            prevPage: page - 1,
+            nextPage: page + 1
         });
     } else {
         res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -21,6 +26,13 @@ app.get('/book/:id', async (req, res) => {
             problem: "Something went wrong, the book may not exist =("
         });
     }
+});
+
+app.get('/book/:id/chapters', async (req, res) => {
+    const page = parseInt(req.query.page);
+    const book = parseInt(req.params.id);
+    const result = await bookService.getChapterList(book, page);
+    res.send(JSON.stringify(result));
 });
 
 app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {

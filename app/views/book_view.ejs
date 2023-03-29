@@ -10,12 +10,10 @@
 <nav class="nav nav-tabs sticky-top">
     <a class="nav-link" href="/">Home</a>
     <%- include('shared/user_nav.ejs') %>
-    <% if (!user) { %>
-        <a class="nav-link" href="/register">Register</a>
-        <a class="nav-link" href="/login">Login</a>
-    <% } %>
 </nav>
+<input type="hidden" value="<%= book.id_book %>" id="id_book">
 <div class="container">
+    <%- include('shared/alert.ejs') %>
     <div class="container">
         <h1>Book Details</h1>
         <div class="row">
@@ -25,11 +23,13 @@
                 <p>Rating: <%= book.avg_score %></p>
                 <hr>
                 <h3>Chapters</h3>
-                <ul>
+                <ul id="chapter_list">
                     <% chapters.forEach(function(chapter) { %>
                         <li><a href="/chapter/<%= chapter.id_chapter %>"><%= chapter.chapter_title %></a></li>
                     <% }); %>
                 </ul>
+                <button class="btn btn-primary" id="prev">Previous page</button>
+                <button class="btn btn-primary" id="next">Next page</button>
                 <% if (user && user.id_user === book.authorId) { %>
                     <a href=<%= `/book/${book.id_book}/publish` %>>
                         <button class="btn btn-primary">Publish new chapter</button>
@@ -61,8 +61,9 @@
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+<script src="/views/book_view.js">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
 </body>
 </html>

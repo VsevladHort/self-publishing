@@ -18,4 +18,40 @@ const getById = async function (id) {
     return await chapterDAO.getById(id);
 };
 
-module.exports = {createChapter, getById};
+async function getChaptersForBook(id_book, numChapters, page) {
+    return await chapterDAO.getAllOrderByDateWhereBookIsWithPagination(id_book, numChapters, page)
+}
+
+async function getNextChapterForBook(id_book, datetime_published) {
+    return await chapterDAO.getNextChapterForBook(id_book, datetime_published);
+}
+
+// returns whether the chapter has been successfully updated
+const edit = async function (id, chapter) {
+    let chap = await chapterDAO.getById(id);
+    if (chap) {
+        chap.chapter_title = chapter.chapter_title;
+        chap.chapter_text = chapter.chapter_text;
+        chap.public = chapter.public;
+        return await chapterDAO.update(chap);
+    }
+    return chap;
+};
+
+// returns whether the chapter has been successfully deleted
+const deleteChapter = async function (id) {
+    let chap = await chapterDAO.getById(id);
+    if (chap) {
+        return await chapterDAO.deleteById(id);
+    }
+    return chap;
+};
+
+module.exports = {
+    createChapter,
+    getById,
+    getChaptersForBook,
+    getNextChapterForBook,
+    edit,
+    deleteChapter
+};

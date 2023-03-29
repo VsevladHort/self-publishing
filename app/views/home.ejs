@@ -35,7 +35,7 @@
         <% if (prevPage) { %>
             <a href="/?page=<%= prevPage %>" class="btn btn-primary">Previous</a>
         <% } %>
-        <% if (nextPage) { %>
+        <% if (nextPage && books.length) { %>
             <a href="/?page=<%= nextPage %>" class="btn btn-primary">Next</a>
         <% } %>
     </div>

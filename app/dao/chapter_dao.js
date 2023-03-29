@@ -34,7 +34,25 @@ class ChapterDAO {
         });
     }
 
-    getAllOrderByDateWithPagination(numPerPage, numOfPage) {
+    getNextChapterForBook(id_book, datetime_published) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
+                                  FROM chapter
+                                  WHERE id_book = ?
+                                  AND datetime_published > ?
+                                  LIMIT 1;`,
+                [id_book, datetime_published],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    getAllOrderByDateWhereBookIsWithPagination(id_book, numPerPage, numOfPage) {
         if (numPerPage <= 0)
             numPerPage = 1;
         if (numOfPage <= 0)
@@ -43,11 +61,12 @@ class ChapterDAO {
         return new Promise((resolve, reject) => {
             connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
                                   FROM chapter
+                                  WHERE id_book = ?
                                   ORDER BY datetime_published 
                                   ASC 
                                   LIMIT ? 
                                   OFFSET ?;`,
-                [numPerPage, (numOfPage * numPerPage)],
+                [id_book, numPerPage, (numOfPage * numPerPage)],
                 (error, result) => {
                     if (error) {
                         reject(error);
@@ -74,9 +93,9 @@ class ChapterDAO {
 
     async update(chapter) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('UPDATE chapter SET chapter_title = ?, chapter_text = ?, datetime_published = ?, datetime_updated = ?, public = ?, id_book = ? WHERE id_chapter = ?;',
+            connectionPool.query('UPDATE chapter SET chapter_title = ?, chapter_text = ?, datetime_published = ?, datetime_updated = NOW(), public = ?, id_book = ? WHERE id_chapter = ?;',
                 [chapter.chapter_title, chapter.chapter_text,
-                    chapter.datetime_published, chapter.datetime_updated,
+                    chapter.datetime_published,
                     chapter.public, chapter.id_book, chapter.id_chapter],
                 (error, result) => {
                     if (error) {
