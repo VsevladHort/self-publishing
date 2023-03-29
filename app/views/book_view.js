@@ -22,8 +22,15 @@ next.addEventListener('click', async () => {
         chapterList.innerHTML = "";
         console.log(res);
         res.forEach(function (chapter) {
-            chapterList.innerHTML += `<li><a href="/chapter/${chapter.id_chapter}">
-                ${chapter.chapter_title}</a></li>`;
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.setAttribute('href', `/chapter/${chapter.id_chapter}`)
+            a.text = chapter.chapter_title;
+            if (!chapter.public) {
+                a.style.color = 'red';
+            }
+            li.appendChild(a);
+            chapterList.appendChild(li);
         });
         if (res.length === 0) {
             next.classList.add('d-none');
@@ -42,8 +49,15 @@ prev.addEventListener('click', async () => {
         chapterList.innerHTML = "";
         console.log(res);
         res.forEach(function (chapter) {
-            chapterList.innerHTML += `<li><a href="/chapter/${chapter.id_chapter}">
-                ${chapter.chapter_title}</a></li>`;
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.setAttribute('href', `/chapter/${chapter.id_chapter}`)
+            a.text = chapter.chapter_title;
+            if (!chapter.public) {
+                a.style.color = 'red';
+            }
+            li.appendChild(a);
+            chapterList.appendChild(li);
         });
         if (page === 1) {
             prev.classList.add('d-none');

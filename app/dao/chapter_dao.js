@@ -97,6 +97,32 @@ class ChapterDAO {
         });
     }
 
+    async getChaptersForBookFilteredByPublic(id_book, numPerPage, numOfPage) {
+        if (numPerPage <= 0)
+            numPerPage = 1;
+        if (numOfPage <= 0)
+            numOfPage = 1;
+        numOfPage -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
+                                  FROM chapter
+                                  WHERE id_book = ?
+                                  AND public = true
+                                  ORDER BY datetime_published 
+                                  ASC 
+                                  LIMIT ? 
+                                  OFFSET ?;`,
+                [id_book, numPerPage, (numOfPage * numPerPage)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
     async create(chapter) {
         return new Promise((resolve, reject) => {
             connectionPool.query('INSERT INTO chapter VALUES (NULL, ?, ?, NOW(), NOW(), true, ?);',

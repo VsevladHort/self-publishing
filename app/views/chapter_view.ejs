@@ -13,6 +13,7 @@
 </nav>
 
 <div class="container mt-5" id="content">
+    <a href="/book/<%= chapter.id_book %>" class="btn btn-primary">Open book</a>
     <% if (isAuthor) { %>
         <a href="/chapter/<%= chapter.id_chapter %>/edit" class="btn btn-primary">Edit</a>
     <% } %>

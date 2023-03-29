@@ -20,7 +20,7 @@ app.get('/book/:id', async (req, res) => {
             problem: false,
             book: book,
             reviews: [],
-            chapters: await bookService.getChapterList(book.id_book, 1),
+            chapters: await bookService.getChapterList(book.id_book, 1, req.session.user),
             prevPage: page - 1,
             nextPage: page + 1
         });
@@ -37,7 +37,7 @@ app.get('/book/:id/chapters', async (req, res) => {
     const book = parseInt(req.params.id);
     if (isNaN(page) || isNaN(book))
         res.status(400).send();
-    const result = await bookService.getChapterList(book, page);
+    const result = await bookService.getChapterList(book, page, req.session.user);
     res.send(JSON.stringify(result));
 });
 

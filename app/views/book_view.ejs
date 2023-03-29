@@ -25,7 +25,13 @@
                 <h3>Chapters</h3>
                 <ul id="chapter_list">
                     <% chapters.forEach(function(chapter) { %>
-                        <li><a href="/chapter/<%= chapter.id_chapter %>"><%= chapter.chapter_title %></a></li>
+                        <% if (chapter.public) { %>
+                            <li><a href="/chapter/<%= chapter.id_chapter %>"><%= chapter.chapter_title %></a></li>
+                        <% } %>
+                        <% if (!chapter.public) { %>
+                            <li><a style="color: red"
+                                   href="/chapter/<%= chapter.id_chapter %>"><%= chapter.chapter_title %></a></li>
+                        <% } %>
                     <% }); %>
                 </ul>
                 <button class="btn btn-primary" id="prev">Previous page</button>

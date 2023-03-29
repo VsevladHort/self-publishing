@@ -22,6 +22,10 @@ async function getChaptersForBook(id_book, numChapters, page) {
     return await chapterDAO.getAllOrderByDateWhereBookIsWithPagination(id_book, numChapters, page)
 }
 
+async function getChaptersForBookFilteredByPublic(id_book, numChapters, page) {
+    return await chapterDAO.getChaptersForBookFilteredByPublic(id_book, numChapters, page)
+}
+
 async function getNextChapterForBook(id_book, datetime_published) {
     return await chapterDAO.getNextChapterForBook(id_book, datetime_published);
 }
@@ -58,5 +62,6 @@ module.exports = {
     getNextChapterForBook,
     edit,
     deleteChapter,
-    getPrevChapterForBook
+    getPrevChapterForBook,
+    getChaptersForBookFilteredByPublic
 };

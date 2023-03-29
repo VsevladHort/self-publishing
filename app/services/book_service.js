@@ -13,8 +13,14 @@ const publish = async function (book) {
     return await bookDAO.getById(id);
 };
 
-const getChapterList = async function (id_book, page) {
-    return await chapterService.getChaptersForBook(id_book, defaultChapterNum, page);
+const getChapterList = async function (id_book, page, user) {
+    if (user) {
+        const book = await bookDAO.getById(id_book);
+        if (book.author === user.id_user || user.role === 'moderator') {
+            return await chapterService.getChaptersForBook(id_book, defaultChapterNum, page);
+        }
+    }
+    return await chapterService.getChaptersForBookFilteredByPublic(id_book, defaultChapterNum, page);
 };
 
 const getAllForHomePage = async function (numPerPage, numOfPage) {

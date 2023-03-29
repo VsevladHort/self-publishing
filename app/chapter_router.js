@@ -33,7 +33,7 @@ app.get('/chapter/:id', async (req, res) => {
         });
 });
 
-app.put('/chapter/:id/edit', auth.requireChapterOrModerationAuthorship, async (req, res) => {
+app.put('/chapter/:id/edit', auth.requireNotBanned, auth.requireChapterOrModerationAuthorship, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
         res.status(404).send();
@@ -47,7 +47,7 @@ app.put('/chapter/:id/edit', auth.requireChapterOrModerationAuthorship, async (r
         res.status(500).send();
 });
 
-app.get('/chapter/:id/edit', auth.requireChapterOrModerationAuthorship, async (req, res) => {
+app.get('/chapter/:id/edit', auth.requireNotBanned, auth.requireChapterOrModerationAuthorship, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
         res.status(404).send();
