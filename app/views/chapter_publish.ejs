@@ -55,7 +55,7 @@
         <% if (!chapter.public){ %>
             <button class="btn btn-primary" id="hide">Show</button>
         <% } %>
-        <a class="btn btn-primary" id="delete">Delete</a>
+        <a class="btn btn-primary" id="delete" href="<%= `/chapter/${chapter.id_chapter}/delete` %>">Delete</a>
     <% } %>
 </div>
 

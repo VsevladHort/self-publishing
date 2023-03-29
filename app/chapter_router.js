@@ -66,4 +66,33 @@ app.get('/chapter/:id/edit', auth.requireNotBanned, auth.requireChapterOrModerat
     });
 });
 
+app.get('/chapter/:id/delete', auth.requireChapterOrModerationAuthorship, async (req, res) => {
+    const {sure} = req.query;
+    if (sure === 'yes') {
+        if (isNaN(req.params.id)) {
+            res.status(400).send();
+            return;
+        }
+        const deleted = await chapterService.deleteChapter(parseInt(req.params.id));
+        if (deleted) {
+            res.render(path.join(__dirname, 'views/error.ejs'), {
+                user: req.session.user,
+                problem: "Your chapter has been deleted successfully."
+            });
+        } else {
+            res.render(path.join(__dirname, 'views/error.ejs'), {
+                user: req.session.user,
+                problem: "There was a problem deleting your chapter =("
+            });
+        }
+    } else {
+        res.render(path.join(__dirname, 'views/delete_confirmation.ejs'), {
+            user: req.session.user,
+            urlToGoBack: `/chapter/${req.params.id}/edit`,
+            urlToProceed: `/chapter/${req.params.id}/delete?sure=yes`,
+            problem: "Are you sure you want to delete this chapter?"
+        });
+    }
+});
+
 module.exports = app;
