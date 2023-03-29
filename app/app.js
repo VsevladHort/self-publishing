@@ -161,11 +161,15 @@ app.post('/publish', auth.requireNotBanned, async (req, res) => {
 
 app.get('/chapter/:id', async (req, res) => {
     const chapter = await chapterService.getById(parseInt(req.params.id));
+    const prev = await chapterService.getPrevChapterForBook(chapter.id_book, chapter.datetime_published);
+    const next = await chapterService.getNextChapterForBook(chapter.id_book, chapter.datetime_published);
     if (chapter)
         res.render(path.join(__dirname, 'views/chapter_view.ejs'), {
             user: req.session.user,
             problem: false,
-            chapter: chapter
+            chapter: chapter,
+            prevPage: prev ? prev.id_chapter : false,
+            nextPage: next ? next.id_chapter : false
         });
     else
         res.render(path.join(__dirname, 'views/error.ejs'), {

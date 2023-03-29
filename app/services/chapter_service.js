@@ -26,6 +26,10 @@ async function getNextChapterForBook(id_book, datetime_published) {
     return await chapterDAO.getNextChapterForBook(id_book, datetime_published);
 }
 
+async function getPrevChapterForBook(id_book, datetime_published) {
+    return await chapterDAO.getPrevChapterForBook(id_book, datetime_published);
+}
+
 // returns whether the chapter has been successfully updated
 const edit = async function (id, chapter) {
     let chap = await chapterDAO.getById(id);
@@ -53,5 +57,6 @@ module.exports = {
     getChaptersForBook,
     getNextChapterForBook,
     edit,
-    deleteChapter
+    deleteChapter,
+    getPrevChapterForBook
 };

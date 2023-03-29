@@ -40,13 +40,33 @@ class ChapterDAO {
                                   FROM chapter
                                   WHERE id_book = ?
                                   AND datetime_published > ?
+                                  ORDER BY datetime_published ASC
                                   LIMIT 1;`,
                 [id_book, datetime_published],
                 (error, result) => {
                     if (error) {
                         reject(error);
                     } else {
-                        resolve(result);
+                        resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    getPrevChapterForBook(id_book, datetime_published) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
+                                  FROM chapter
+                                  WHERE id_book = ?
+                                  AND datetime_published < ?
+                                  ORDER BY datetime_published DESC
+                                  LIMIT 1;`,
+                [id_book, datetime_published],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result[0]);
                     }
                 });
         });

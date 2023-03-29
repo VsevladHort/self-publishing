@@ -15,6 +15,12 @@
 <div class="container mt-5" id="content">
     <h1><%= chapter.chapter_title %></h1>
     <%- chapter.chapter_text %>
+    <% if (prevPage) { %>
+        <a href="<%= prevPage %>" class="btn btn-primary">Previous</a>
+    <% } %>
+    <% if (nextPage) { %>
+        <a href="<%= nextPage %>" class="btn btn-primary">Next</a>
+    <% } %>
 </div>
 
 
