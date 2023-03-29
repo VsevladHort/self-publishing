@@ -187,6 +187,20 @@ app.get('/chapter/:id', async (req, res) => {
         });
 });
 
+app.put('/chapter/:id/edit', auth.requireChapterOrModerationAuthorship, async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+        res.status(404).send();
+        return;
+    }
+    const chapter = await chapterService.getById(id);
+    const updatedChapter = await chapterService.edit(chapter.id_chapter, req.body);
+    if (updatedChapter)
+        res.status(200).send({msg: "Chapter successfully updated"});
+    else
+        res.status(500).send();
+});
+
 app.get('/chapter/:id/edit', auth.requireChapterOrModerationAuthorship, async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) {

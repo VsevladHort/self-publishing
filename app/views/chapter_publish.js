@@ -31,7 +31,7 @@ if (publish !== null)
                 messageSpan.textContent = "title cannot be blank!";
                 return;
             }
-            updateDocument(hidden.value, editor.root.innerHTML, title.value, visibleToPublic).then(async (resp) => {
+            updateDocument(hiddenChapter.value, editor.root.innerHTML, title.value, visibleToPublic).then(async (resp) => {
                 message.style.display = 'block';
                 messageSpan.textContent = resp.msg;
             }).catch(async (resp) => {
@@ -65,9 +65,14 @@ if (btnHide !== null)
             messageSpan.textContent = "title cannot be blank!";
             return;
         }
-        updateDocument(hidden.value, editor.root.innerHTML, title.value, (!visibleToPublic)).then(async (resp) => {
+        updateDocument(hiddenChapter.value, editor.root.innerHTML, title.value, (!visibleToPublic)).then(async (resp) => {
             message.style.display = 'block';
             messageSpan.textContent = resp.msg;
+            if ((!visibleToPublic))
+                btnHide.textContent = "Hide";
+            else
+                btnHide.textContent = "Show";
+            hiddenPublic.value = (!visibleToPublic) ? 100 : 0;
         }).catch(async (resp) => {
             message.style.display = 'block';
             messageSpan.textContent = resp;
@@ -81,14 +86,13 @@ function updateDocument(id, data, title, visible) {
         body: JSON.stringify({
             chapter_text: data,
             chapter_title: title,
-            public: visible,
-            id_book: id
+            public: visible
         }),
         headers: {
             'Content-Type': 'application/json'
         }
     };
-    return fetch(`/book/${id}/publish`, options)
+    return fetch(`/chapter/${id}/edit`, options)
         .then(function (response) {
             if (!response.ok) {
                 return response.text().then(function (text) {
