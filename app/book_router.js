@@ -131,4 +131,29 @@ app.post('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, asy
         res.status(500).send({msg: "Error saving document"});
 });
 
+app.get('/publish', auth.requireNotBanned, async (req, res) => {
+    res.render(path.join(__dirname, 'views/publish.ejs'), {
+        user: req.session.user,
+        problem: false
+    });
+});
+
+app.post('/publish', auth.requireNotBanned, async (req, res) => {
+    const book = await bookService.publish({
+        author: req.session.user.id_user,
+        book_title: req.body.title
+    })
+    if (book) {
+        res.render(path.join(__dirname, 'views/publish.ejs'), {
+            user: req.session.user,
+            problem: `Your book by the title ${book.book_title} was successfully published!`
+        });
+    } else {
+        res.render(path.join(__dirname, 'views/publish.ejs'), {
+            user: req.session.user,
+            problem: "Something went wrong when publishing the book =("
+        });
+    }
+});
+
 module.exports = app;
