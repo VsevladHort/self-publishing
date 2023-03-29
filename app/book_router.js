@@ -6,6 +6,10 @@ const express = require("express");
 const app = express.Router();
 
 app.get('/book/:id', async (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.status(404).send();
+        return;
+    }
     const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
     let page = parseInt(req.query.page);
     if (!page || page <= 0)
@@ -31,11 +35,17 @@ app.get('/book/:id', async (req, res) => {
 app.get('/book/:id/chapters', async (req, res) => {
     const page = parseInt(req.query.page);
     const book = parseInt(req.params.id);
+    if (isNaN(page) || isNaN(book))
+        res.status(400).send();
     const result = await bookService.getChapterList(book, page);
     res.send(JSON.stringify(result));
 });
 
 app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.status(404).send();
+        return;
+    }
     const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
     if (book) {
         res.render(path.join(__dirname, 'views/edit_book.ejs'), {
@@ -52,6 +62,10 @@ app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
 });
 
 app.post('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.status(404).send();
+        return;
+    }
     const hasWorkedEdit = await bookService.edit(parseInt(req.params.id), req.body.title)
     const book = await bookService.getByIdForDisplay(parseInt(req.params.id))
     if (hasWorkedEdit) {
@@ -71,6 +85,10 @@ app.post('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
 app.get('/book/:id/delete', auth.requireAuthorship, async (req, res) => {
     const {sure} = req.query;
     if (sure === 'yes') {
+        if (isNaN(req.params.id)) {
+            res.status(404).send();
+            return;
+        }
         const deleted = await bookService.deleteBook(parseInt(req.params.id));
         if (deleted) {
             res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -100,7 +118,8 @@ app.get('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, asyn
         problem: false,
         id_book: req.params.id,
         id_chapter: false,
-        chapter: false
+        chapter: false,
+        isAuthor: true
     });
 });
 

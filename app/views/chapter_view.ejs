@@ -13,6 +13,9 @@
 </nav>
 
 <div class="container mt-5" id="content">
+    <% if (isAuthor) { %>
+        <a href="/chapter/<%= chapter.id_chapter %>/edit" class="btn btn-primary">Edit</a>
+    <% } %>
     <h1><%= chapter.chapter_title %></h1>
     <%- chapter.chapter_text %>
     <% if (prevPage) { %>

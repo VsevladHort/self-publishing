@@ -16,35 +16,54 @@
 <div class="container mt-5">
     <%- include('shared/alert.ejs') %>
     <% if (!chapter) { %>
-        <label for="title">Title of your chapter: </label>
-        <input type="text" value="" id="title">
+        <label for="title">Title of the chapter: </label>
+        <input type="text" value="" id="title"
+        <% if (!isAuthor) { %> readonly="readonly"
+                <% } %>
+        >
     <% } %>
 
     <% if (chapter) { %>
-        <label for="title">Title of your chapter: </label>
-        <input type="text" value="<%= chapter.chapter_title %>" id="title">
+        <label for="title">Title of the chapter: </label>
+        <input type="text" value="<%= chapter.chapter_title %>" id="title"
+        <% if (!isAuthor) { %> readonly="readonly"
+                <% } %>
+        >
     <% } %>
 
     <div id="toolbar">
         <button class="ql-bold">Bold</button>
         <button class="ql-italic">Italic</button>
     </div>
-
     <div id="editor">
         <% if (!chapter){ %>
             <p>Write your chapter here!</p>
         <% } %>
+        <% if (chapter){ %>
+            <%- chapter.chapter_text %>
+        <% } %>
     </div>
 
-
     <a class="btn btn-primary" id="back" href="<%= `${urlToGoBack}` %>">Go back</a>
-    <button class="btn btn-primary" id="publish">Publish</button>
-    <% if (id_chapter){ %>
-        <button class="btn btn-primary" id="hide">Hide</button>
+    <% if (isAuthor){ %>
+        <button class="btn btn-primary" id="publish">Publish</button>
+    <% } %>
+    <% if (chapter){ %>
+        <% if (chapter.public){ %>
+            <button class="btn btn-primary" id="hide">Hide</button>
+        <% } %>
+        <% if (!chapter.public){ %>
+            <button class="btn btn-primary" id="hide">Show</button>
+        <% } %>
+        <a class="btn btn-primary" id="delete">Delete</a>
     <% } %>
 </div>
 
 <input id="hidden" type="hidden" value="<%= `${id_book}` %>">
+<% if (chapter){ %>
+    <input id="hidden_chapter" type="hidden" value="<%= `${chapter.id_chapter}` %>">
+    <input id="hidden_visibility" type="hidden" value="<%= `${chapter.public}` %>">
+<% } %>
 
 <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
 
