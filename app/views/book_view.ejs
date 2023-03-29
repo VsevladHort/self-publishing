@@ -20,8 +20,8 @@
         <h1>Book Details</h1>
         <div class="row">
             <div class="col-md-8">
-                <h2><%= book.book_title %></h2>
-                <p>By <%= book.author %></p>
+                <h2><%= `${book.book_title}` %></h2>
+                <p>By <%= `${book.author}` %></p>
                 <p>Rating: <%= book.avg_score %></p>
                 <hr>
                 <h3>Chapters</h3>
@@ -43,7 +43,7 @@
                             <h4 class="card-title"><%= review.by %></h4>
                             <p class="card-text"><%= review.text_review %></p>
                             <p class="card-text"><%= review.avg_score %> out of 5</p>
-                            <p class="card-text">By <%= review.author %></p>
+                            <p class="card-text">By <%= `${review.author}` %></p>
                         </div>
                     </div>
                 <% }); %>
