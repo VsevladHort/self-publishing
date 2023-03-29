@@ -1,5 +1,4 @@
 const connectionPool = require('./mysql_con_pool').pool;
-const bcrypt = require('bcrypt');
 const dotenv = require('dotenv').config();
 
 class BookDAO {

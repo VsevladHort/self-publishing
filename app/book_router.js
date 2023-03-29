@@ -1,4 +1,5 @@
 const bookService = require("./services/book_service");
+const chapterService = require("./services/chapter_service");
 const path = require("path");
 const auth = require("./auth_middleware");
 const express = require("express");
@@ -83,8 +84,20 @@ app.get('/book/:id/delete', auth.requireAuthorship, async (req, res) => {
 app.get('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, async (req, res) => {
     res.render(path.join(__dirname, 'views/chapter_publish.ejs'), {
         user: req.session.user,
-        problem: false
+        urlToGoBack: `/book/${req.params.id}`,
+        problem: false,
+        id_book: req.params.id,
+        id_chapter: false,
+        chapter: false
     });
+});
+
+app.post('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, async (req, res) => {
+    const result = await chapterService.createChapter(req.body);
+    if (result)
+        res.status(200).send({msg: "Your chapter has been published successfully"});
+    else
+        res.status(500).send({msg: "Error saving document"});
 });
 
 module.exports = app;

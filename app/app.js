@@ -4,6 +4,7 @@ const express = require('express');
 const userModel = require('./dao/user_dao');
 const userService = require('./services/user_service');
 const bookService = require('./services/book_service');
+const chapterService = require("./services/chapter_service");
 const auth = require('./auth_middleware');
 const bookRouter = require('./book_router');
 const app = express();
@@ -156,6 +157,21 @@ app.post('/publish', auth.requireNotBanned, async (req, res) => {
             problem: "Something went wrong when publishing the book =("
         });
     }
+});
+
+app.get('/chapter/:id', async (req, res) => {
+    const chapter = await chapterService.getById(parseInt(req.params.id));
+    if (chapter)
+        res.render(path.join(__dirname, 'views/chapter_view.ejs'), {
+            user: req.session.user,
+            problem: false,
+            chapter: chapter
+        });
+    else
+        res.render(path.join(__dirname, 'views/error.ejs'), {
+            user: req.session.user,
+            problem: "The chapter your tried to access does not exist!"
+        });
 });
 
 app.use(bookRouter);

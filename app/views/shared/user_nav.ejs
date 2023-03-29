@@ -3,3 +3,7 @@
     <a class="nav-link" href="/publish">Publish</a>
     <a class="nav-link" href="/logout">Logout</a>
 <% } %>
+<% if (!user) { %>
+    <a class="nav-link" href="/register">Register</a>
+    <a class="nav-link" href="/login">Login</a>
+<% } %>
