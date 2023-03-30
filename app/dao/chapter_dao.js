@@ -154,6 +154,24 @@ class ChapterDAO {
                 });
         });
     }
+
+    async getListById(id) {
+        return new Promise((resolve, reject) => {
+            const placeholders = id.map(() => '?').join(',');
+            connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
+                                  FROM chapter
+                                  WHERE public = true
+                                  AND id_chapter IN (${placeholders})`,
+                id,
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
 }
 
 module.exports = ChapterDAO;

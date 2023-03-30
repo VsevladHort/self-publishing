@@ -90,14 +90,30 @@ const getReadingListById = async function (user, perPage, page) {
     return await userDao.getReadingListById(user.id_user, perPage, page);
 }
 
-const deleteFromReadingList = async function (id) {
-    return await userDao.deleteFromReadingList(id);
+const getBookmarksListById = async function (user, perPage, page) {
+    return await userDao.getBookmarksListById(user.id_user, perPage, page);
+}
+
+const deleteFromReadingList = async function (id, user_id) {
+    return await userDao.deleteFromReadingList(id, user_id);
+}
+
+const deleteFromBookmarksList = async function (id, user_id) {
+    return await userDao.deleteFromBookmarksList(id, user_id);
 }
 
 const addToReadingList = async function (id, user) {
     const check = await userDao.checkIfExistsInUserReadingList(user.id_user, id)
     if (!check)
         return await userDao.addToReadingList(id, user);
+    else
+        return false;
+}
+
+const addToBookmarksList = async function (id, user) {
+    const check = await userDao.checkIfExistsInBookmarksList(user.id_user, id)
+    if (!check)
+        return await userDao.addToBookmarksList(id, user);
     else
         return false;
 }
@@ -111,5 +127,8 @@ module.exports = {
     renewInfo,
     getReadingListById,
     deleteFromReadingList,
-    addToReadingList
+    addToReadingList,
+    getBookmarksListById,
+    deleteFromBookmarksList,
+    addToBookmarksList
 }

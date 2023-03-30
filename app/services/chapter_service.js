@@ -55,6 +55,13 @@ const deleteChapter = async function (id) {
     return chap;
 };
 
+const getChapterListById = async function (id) {
+    id = id.map(x => x.id_chapter);
+    if (id.length === 0)
+        return [];
+    return await chapterDAO.getListById(id);
+}
+
 module.exports = {
     createChapter,
     getById,
@@ -63,5 +70,6 @@ module.exports = {
     edit,
     deleteChapter,
     getPrevChapterForBook,
-    getChaptersForBookFilteredByPublic
+    getChaptersForBookFilteredByPublic,
+    getChapterListById
 };

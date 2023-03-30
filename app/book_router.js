@@ -67,7 +67,7 @@ app.delete('/books/my/reading/delete/:id', auth.requireLogin, async (req, res) =
             res.status(404).send();
             return;
         }
-        const deleted = await userService.deleteFromReadingList(req.params.id);
+        const deleted = await userService.deleteFromReadingList(req.params.id, req.session.user.id_user);
         if (deleted)
             res.status(200).send();
         else

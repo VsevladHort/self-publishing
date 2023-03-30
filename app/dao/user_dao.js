@@ -54,10 +54,10 @@ class UserDAO {
         });
     }
 
-    deleteFromReadingList(id) {
+    deleteFromReadingList(id, user_id) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('DELETE FROM user_reading_list WHERE id_book = ?;',
-                id,
+            connectionPool.query('DELETE FROM user_reading_list WHERE id_book = ? AND id_user = ?;',
+                [id, user_id],
                 (error, result) => {
                     if (error) {
                         reject(error);
@@ -170,6 +170,69 @@ class UserDAO {
                     });
             });
         }
+    }
+
+    async getBookmarksListById(id_user, perPage, page) {
+        if (perPage <= 0)
+            perPage = 1;
+        if (page <= 0)
+            page = 1;
+        page -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT id_chapter FROM user_bookmarks WHERE id_user = ? LIMIT ? OFFSET ?;',
+                [id_user, perPage, (page * perPage)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    async deleteFromBookmarksList(id, id_user) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('DELETE FROM user_bookmarks WHERE id_chapter = ? AND id_user = ?;',
+                [id, id_user],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    checkIfExistsInBookmarksList(id_user, id) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT id_chapter FROM user_bookmarks WHERE id_user = ?  AND id_chapter = ?;',
+                [id_user, id],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else if (result.length === 0) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+        });
+    }
+
+    async addToBookmarksList(id, user) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('INSERT INTO user_bookmarks VALUES (?, ?, NOW());',
+                [user.id_user, id],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
     }
 }
 
