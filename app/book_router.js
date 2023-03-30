@@ -15,6 +15,10 @@ app.get('/book/:id', async (req, res) => {
     let page = parseInt(req.query.page);
     if (!page || page <= 0)
         page = 1;
+    let rating = false;
+    if (req.session.user) {
+        rating = await userService.findRatingForBook(req.session.user.id_user, req.params.id);
+    }
     if (book) {
         res.render(path.join(__dirname, 'views/book_view.ejs'), {
             user: req.session.user,
@@ -23,7 +27,8 @@ app.get('/book/:id', async (req, res) => {
             reviews: [],
             chapters: await bookService.getChapterList(book.id_book, 1, req.session.user),
             prevPage: page - 1,
-            nextPage: page + 1
+            nextPage: page + 1,
+            rating: rating.score
         });
     } else {
         res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -48,6 +53,19 @@ app.get('/books/my', auth.requireLogin, async (req, res) => {
             nextPage: page + 1,
             hasPublishedBooks: hasBooks
         });
+    }
+);
+
+app.post('/book/:id/rate', auth.requireLogin, auth.requireNotBanned, async (req, res) => {
+        if (isNaN(req.params.id)) {
+            res.status(404).send();
+            return;
+        }
+        const rated = await userService.addOrReplaceRatingForBook(req.body.score, req.session.user.id_user, req.params.id);
+        if (rated)
+            res.status(200).send({msg: "Rated!"});
+        else
+            res.status(500).send({msg: "Something went wrong!"});
     }
 );
 

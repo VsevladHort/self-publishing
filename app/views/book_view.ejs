@@ -58,6 +58,46 @@
                 <% }); %>
             </div>
             <div class="col-md-4">
+                <% if (user) { %>
+                    <div class="rating">
+                        <% if (!rating) { %>
+                            <p>Rate this book from 1 to 5:</p>
+                        <% } %>
+                        <% if (rating) { %>
+                            <p>Your rating for this book is:</p>
+                        <% } %>
+                        <label for="star1">1: </label>
+                        <input type="radio" name="rating" id="star1" value="1"
+                        <% if (rating === 1) { %>
+                               checked
+                                <% } %>
+                        >
+                        <label for="star2">2: </label>
+                        <input type="radio" name="rating" id="star2" value="2"
+                        <% if (rating === 2) { %>
+                               checked
+                                <% } %>
+                        >
+                        <label for="star3">3: </label>
+                        <input type="radio" name="rating" id="star3" value="3"
+                        <% if (rating === 3) { %>
+                               checked
+                                <% } %>
+                        >
+                        <label for="star4">4: </label>
+                        <input type="radio" name="rating" id="star4" value="4"
+                        <% if (rating === 4) { %>
+                               checked
+                                <% } %>
+                        >
+                        <label for="star5">5: </label>
+                        <input type="radio" name="rating" id="star5" value="5"
+                        <% if (rating === 5) { %>
+                               checked
+                                <% } %>
+                        >
+                    </div>
+                <% } %>
                 <!--                <img src="https://www.grouphealth.ca/wp-content/uploads/2018/05/placeholder-image.png"-->
                 <!--                     alt="<%= book.book_title %> cover" class="img-fluid">-->
                 <br><br>

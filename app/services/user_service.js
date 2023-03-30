@@ -118,6 +118,22 @@ const addToBookmarksList = async function (id, user) {
         return false;
 }
 
+const findRatingForBook = async function (id_user, id_book) {
+    const check = await userDao.checkIfExistsInRatingsList(id_user, id_book)
+    if (check)
+        return await userDao.findRatingForBook(id_user, id_book);
+    else
+        return false;
+}
+
+const addOrReplaceRatingForBook = async function (score, id_user, id_book) {
+    const check = await userDao.checkIfExistsInRatingsList(id_user, id_book)
+    if (check)
+        return await userDao.updateRatingForBook(score, id_user, id_book);
+    else
+        return await userDao.insertRatingForBook(score, id_user, id_book);
+}
+
 module.exports = {
     findAndAuthenticate,
     editInformation,
@@ -130,5 +146,7 @@ module.exports = {
     addToReadingList,
     getBookmarksListById,
     deleteFromBookmarksList,
-    addToBookmarksList
+    addToBookmarksList,
+    findRatingForBook,
+    addOrReplaceRatingForBook
 }

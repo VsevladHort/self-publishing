@@ -3,7 +3,8 @@ const prev = document.getElementById("prev");
 const bookList = document.getElementById("books");
 const message = document.getElementById("message");
 const messageSpan = document.getElementById("msg_msg");
-message.style.display = 'none';
+if (message !== null)
+    message.style.display = 'none';
 let page = 1;
 
 if (bookList !== null)
@@ -16,41 +17,46 @@ if (bookList !== null)
         message.style.display = 'block';
         messageSpan.textContent = err;
     });
-prev.classList.add('d-none');
 
-message.addEventListener('click', () => {
-    message.style.display = 'none';
-});
+if (prev !== null)
+    prev.classList.add('d-none');
 
-next.addEventListener('click', async () => {
-    page++;
-    getChapters(page).then((res) => {
-        drawBookList(res);
-        if (res.length === 0) {
-            next.classList.add('d-none');
-        }
-        if (prev.classList.contains('d-none'))
-            prev.classList.remove('d-none');
-    }).catch((err) => {
-        message.style.display = 'block';
-        messageSpan.textContent = err;
+if (message !== null)
+    message.addEventListener('click', () => {
+        message.style.display = 'none';
     });
-});
 
-prev.addEventListener('click', async () => {
-    page -= 1;
-    getChapters(page).then((res) => {
-        drawBookList(res);
-        if (page === 1) {
-            prev.classList.add('d-none');
-        }
-        if (next.classList.contains('d-none'))
-            next.classList.remove('d-none');
-    }).catch((err) => {
-        message.style.display = 'block';
-        messageSpan.textContent = err;
+if (next !== null)
+    next.addEventListener('click', async () => {
+        page++;
+        getChapters(page).then((res) => {
+            drawBookList(res);
+            if (res.length === 0) {
+                next.classList.add('d-none');
+            }
+            if (prev.classList.contains('d-none'))
+                prev.classList.remove('d-none');
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        });
     });
-});
+
+if (prev !== null)
+    prev.addEventListener('click', async () => {
+        page -= 1;
+        getChapters(page).then((res) => {
+            drawBookList(res);
+            if (page === 1) {
+                prev.classList.add('d-none');
+            }
+            if (next.classList.contains('d-none'))
+                next.classList.remove('d-none');
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        });
+    });
 
 function drawBookList(res) {
     bookList.innerHTML = "";

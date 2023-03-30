@@ -121,7 +121,7 @@ class BookDAO {
                                   LEFT JOIN rating r 
                                   ON b.id_book = r.id_book 
                                   GROUP BY b.id_book, b.author, b.book_title, b.date_published 
-                                  ORDER BY avg_score, b.date_published DESC 
+                                  ORDER BY avg_score DESC 
                                   LIMIT ? 
                                   OFFSET ?;`,
                 [numPerPage, (numOfPage * numPerPage)],

@@ -30,12 +30,12 @@ const auth = {
 
     requireNotBanned: (req, res, next) => {
         if (!req.session.user) {
-            return res.render(path.join(__dirname, 'views/error.ejs'), {
+            return res.status(403).render(path.join(__dirname, 'views/error.ejs'), {
                 user: false,
                 problem: 'Only logged in users may view this content!'
             })
         } else if (req.session.user.banned) {
-            return res.render(path.join(__dirname, 'views/error.ejs'), {
+            return res.status(403).render(path.join(__dirname, 'views/error.ejs'), {
                 user: req.session.user,
                 problem: 'You are not allowed to do this content as you are banned!'
             })

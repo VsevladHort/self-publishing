@@ -234,6 +234,64 @@ class UserDAO {
                 });
         });
     }
+
+    async checkIfExistsInRatingsList(id_user, id_book) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT score FROM rating WHERE id_user = ?  AND id_book = ?;',
+                [id_user, id_book],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else if (result.length === 0) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+        });
+    }
+
+    async findRatingForBook(id_user, id_book) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT score FROM rating WHERE id_user = ?  AND id_book = ?;',
+                [id_user, id_book],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    async updateRatingForBook(score, id_user, id_book) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('UPDATE rating SET score = ? WHERE id_user = ? AND id_book = ?;',
+                [score, id_user, id_book],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    async insertRatingForBook(score, id_user, id_book) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('INSERT INTO rating VALUES(?, ?, ?);',
+                [id_user, id_book, score],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
 }
 
 module.exports = UserDAO;
