@@ -43,6 +43,15 @@ const auth = {
         next();
     },
 
+    requireNotBannedJsonResponse: (req, res, next) => {
+        if (!req.session.user) {
+            return res.status(403).send(JSON.stringify({msg: "Only logged in users may view this content!"}));
+        } else if (req.session.user.banned) {
+            return res.status(403).send(JSON.stringify({msg: 'You are not allowed to do this content as you are banned!'}));
+        }
+        next();
+    },
+
     requireNotLoggedIn: (req, res, next) => {
         if (req.session.user) {
             return res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -69,6 +78,20 @@ const auth = {
                 user: req.session.user,
                 problem: 'Only author of the book is allowed to do this!'
             })
+        }
+        next();
+    },
+
+    requireAuthorshipJsonResponse: async (req, res, next) => {
+        if (isNaN(req.params.id)) {
+            res.status(400).send();
+            return;
+        }
+        const book = await bookService.getById(parseInt(req.params.id));
+        if (!req.session.user) {
+            return res.send(JSON.stringify({msg: "Only logged in users are allowed to do this!"}));
+        } else if (req.session.user.id_user !== book.author) {
+            return res.send(JSON.stringify({msg: 'Only author of the book is allowed to do this!'}));
         }
         next();
     },

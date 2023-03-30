@@ -1,19 +1,58 @@
 const next = document.getElementById("next");
+const next1 = document.getElementById("next1");
 const prev = document.getElementById("prev");
+const prev1 = document.getElementById("prev1");
 const chapterList = document.getElementById("chapter_list");
 const id_book = document.getElementById("id_book").value;
 const add_btn = document.getElementById("add_btn");
+const publish_review = document.getElementById("publish_review");
 const star1 = document.getElementById("star1");
 const star2 = document.getElementById("star2");
 const star3 = document.getElementById("star3");
 const star4 = document.getElementById("star4");
 const star5 = document.getElementById("star5");
 let page = 1;
+let pageReviews = 1;
 
 if (prev !== null)
     prev.classList.add('d-none');
+if (prev1 !== null)
+    prev1.classList.add('d-none');
 if (chapterList.innerHTML === '') {
     next.classList.add('d-none');
+}
+
+getReviews(id_book, pageReviews).then((res) => {
+    drawReviews(res);
+}).catch((err) => {
+    message.style.display = 'block';
+    messageSpan.textContent = err;
+});
+
+if (publish_review !== null) {
+    publish_review.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const text_review = document.getElementById("text_review").value;
+        if (text_review === "" || text_review === null) {
+            message.style.display = 'block';
+            messageSpan.textContent = "Review must be non-empty";
+            return;
+        }
+        publishReview(text_review).then((res) => {
+            message.style.display = 'block';
+            messageSpan.textContent = res.msg;
+            getReviews(id_book, pageReviews).then((res) => {
+                drawReviews(res);
+            }).catch((err) => {
+                message.style.display = 'block';
+                messageSpan.textContent = err;
+            });
+            document.getElementById("submiting_review").style.display = 'none';
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        })
+    });
 }
 
 if (star1 !== null) {
@@ -156,6 +195,95 @@ function rateBook(rating) {
             'Content-Type': 'application/json'
         }
     })
+        .then(function (response) {
+            if (!response.ok) {
+                return response.text().then(function (text) {
+                    throw new Error('Error loading document: ' + text);
+                });
+            }
+            return response.json();
+        });
+}
+
+function publishReview(text_review) {
+    return fetch(`/book/${id_book}/reviews`, {
+        method: "POST",
+        body: JSON.stringify({text_review: text_review}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        if (!response.ok) {
+            return response.text().then(function (text) {
+                throw new Error('Error loading document: ' + text);
+            });
+        }
+        return response.json();
+    });
+}
+
+function drawReviews(res) {
+    document.getElementById("reviewAnchor").innerHTML = "";
+    console.log(res);
+    res.forEach(function (review) {
+        const divCard = document.createElement('div');
+        divCard.classList.add('card');
+        const divCardBody = document.createElement('div');
+        divCardBody.classList.add('card-body');
+        const h4 = document.createElement('h4');
+        h4.classList.add("card-title");
+        const p1 = document.createElement('p');
+        p1.classList.add("card-text");
+        const p2 = document.createElement('p');
+        p2.classList.add("card-text");
+        if (!review.public) {
+            divCard.style.opacity = "0.5";
+        }
+        h4.textContent = `By ${review.author}`;
+        p1.textContent = `Rating: ${review.score === 'null' ? 'not given' : review.score}/5`;
+        p2.textContent = review.text_review;
+        divCardBody.appendChild(h4);
+        divCardBody.appendChild(p1);
+        divCardBody.appendChild(p2);
+        divCard.appendChild(divCardBody);
+        document.getElementById("reviewAnchor").appendChild(divCard);
+    });
+}
+
+if (next1 !== null)
+    next1.addEventListener('click', async () => {
+        pageReviews++;
+        getReviews(id_book, pageReviews).then((res) => {
+            drawReviews(res);
+            if (res.length === 0) {
+                next1.classList.add('d-none');
+            }
+            if (prev1.classList.contains('d-none'))
+                prev1.classList.remove('d-none');
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        });
+    });
+
+if (prev1 !== null)
+    prev1.addEventListener('click', async () => {
+        pageReviews -= 1;
+        getReviews(id_book, pageReviews).then((res) => {
+            drawReviews(res);
+            if (page === 1) {
+                prev1.classList.add('d-none');
+            }
+            if (next1.classList.contains('d-none'))
+                next1.classList.remove('d-none');
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        });
+    });
+
+function getReviews(id, page) {
+    return fetch(`/book/${id}/reviews?page=${page}`)
         .then(function (response) {
             if (!response.ok) {
                 return response.text().then(function (text) {

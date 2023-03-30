@@ -1,13 +1,18 @@
 const bookService = require("./services/book_service");
 const chapterService = require("./services/chapter_service");
 const userService = require("./services/user_service");
+const reviewsImport = require("./dao/reviews_dao");
+const reviewsDAO = new reviewsImport();
+const userImport = require("./dao/user_dao");
+const userDAO = new userImport();
 const path = require("path");
 const auth = require("./auth_middleware");
 const express = require("express");
 const app = express.Router();
 
 app.get('/book/:id', async (req, res) => {
-    if (isNaN(req.params.id)) {
+    const id_book = req.params.id;
+    if (isNaN(id_book)) {
         res.status(404).send();
         return;
     }
@@ -19,6 +24,11 @@ app.get('/book/:id', async (req, res) => {
     if (req.session.user) {
         rating = await userService.findRatingForBook(req.session.user.id_user, req.params.id);
     }
+    let hasReviewed = false;
+    if (req.session.user) {
+        const reviewOfUser = await reviewsDAO.getById(req.session.user.id_user, id_book);
+        hasReviewed = reviewOfUser !== null;
+    }
     if (book) {
         res.render(path.join(__dirname, 'views/book_view.ejs'), {
             user: req.session.user,
@@ -28,7 +38,8 @@ app.get('/book/:id', async (req, res) => {
             chapters: await bookService.getChapterList(book.id_book, 1, req.session.user),
             prevPage: page - 1,
             nextPage: page + 1,
-            rating: rating.score
+            rating: rating.score,
+            hasReviewed: hasReviewed
         });
     } else {
         res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -56,7 +67,7 @@ app.get('/books/my', auth.requireLogin, async (req, res) => {
     }
 );
 
-app.post('/book/:id/rate', auth.requireLogin, auth.requireNotBanned, async (req, res) => {
+app.post('/book/:id/rate', auth.requireNotBannedJsonResponse, async (req, res) => {
         if (isNaN(req.params.id)) {
             res.status(404).send();
             return;
@@ -123,6 +134,45 @@ app.get('/book/:id/chapters', async (req, res) => {
         res.status(400).send();
     const result = await bookService.getChapterList(book, page, req.session.user);
     res.send(JSON.stringify(result));
+});
+
+app.get('/book/:id/reviews', async (req, res) => {
+    const page = parseInt(req.query.page);
+    const book = parseInt(req.params.id);
+    if (isNaN(page) || isNaN(book))
+        res.status(400).send();
+    let result = await reviewsDAO.getAllOrderByDateWithPagination(10, page, book);
+    result = result.filter(x => {
+        return x.public || parseInt(x.id_user) === parseInt(req.session.user.id_user) || req.session.user.role === 'moderator';
+    });
+    let realResult = [];
+    for (x of result) {
+        const author = await userDAO.getById(x.id_user);
+        x.author = `${author.user_name}#${author.id_user}`;
+        realResult.push(x);
+    }
+    res.send(JSON.stringify(realResult));
+});
+
+app.post('/book/:id/reviews', auth.requireNotBannedJsonResponse, async (req, res) => {
+    const book = parseInt(req.params.id);
+    if (isNaN(book))
+        res.status(400).send();
+    let check = await reviewsDAO.getById(req.session.user.id_user, book);
+    if (check) {
+        res.send(JSON.stringify({msg: "You have already published a review!"}));
+        return;
+    }
+    let review = {
+        text_review: req.body.text_review,
+        id_book: book,
+        id_user: req.session.user.id_user
+    }
+    let result = await reviewsDAO.create(review);
+    if (result)
+        res.send(JSON.stringify({msg: "Successfully published review!"}));
+    else
+        res.send(JSON.stringify({msg: "There was a problem publishing review!"}));
 });
 
 app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
@@ -207,7 +257,7 @@ app.get('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, asyn
     });
 });
 
-app.post('/book/:id/publish', auth.requireNotBanned, auth.requireAuthorship, async (req, res) => {
+app.post('/book/:id/publish', auth.requireNotBannedJsonResponse, auth.requireAuthorshipJsonResponse, async (req, res) => {
     const result = await chapterService.createChapter(req.body);
     if (result)
         res.status(200).send({msg: "Your chapter has been published successfully"});
@@ -222,7 +272,7 @@ app.get('/publish', auth.requireNotBanned, async (req, res) => {
     });
 });
 
-app.post('/publish', auth.requireNotBanned, async (req, res) => {
+app.post('/publish', auth.requireNotBannedJsonResponse, async (req, res) => {
     const book = await bookService.publish({
         author: req.session.user.id_user,
         book_title: req.body.title

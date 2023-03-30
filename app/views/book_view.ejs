@@ -45,17 +45,24 @@
                     </a>
                 <% } %>
                 <hr>
-                <h3>Reviews</h3>
-                <% reviews.forEach(function(review) { %>
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title"><%= review.by %></h4>
-                            <p class="card-text"><%= review.text_review %></p>
-                            <p class="card-text"><%= review.avg_score %> out of 5</p>
-                            <p class="card-text">By <%= `${review.author}` %></p>
-                        </div>
+                <% if (user && !hasReviewed) { %>
+                    <div class="container my-5" id="submiting_review">
+                        <h3>Add a Review</h3>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="text_review">Review</label>
+                                <textarea class="form-control" id="text_review" rows="3" name="text_review"
+                                          placeholder="Enter your review" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="publish_review">Submit a review</button>
+                        </form>
                     </div>
-                <% }); %>
+                <% } %>
+                <h3>Reviews</h3>
+                <div id="reviewAnchor">
+                </div>
+                <button class="btn btn-primary" id="prev1">Previous page</button>
+                <button class="btn btn-primary" id="next1">Next page</button>
             </div>
             <div class="col-md-4">
                 <% if (user) { %>
