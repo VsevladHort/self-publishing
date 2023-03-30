@@ -61,6 +61,32 @@ class BookDAO {
         });
     }
 
+    getAllOrderByDateWithPaginationWhereAuthorIs(numPerPage, numOfPage, author) {
+        if (numPerPage <= 0)
+            numPerPage = 1;
+        if (numOfPage <= 0)
+            numOfPage = 1;
+        numOfPage -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT b.id_book, b.author, b.book_title, b.date_published, AVG(COALESCE(r.score, 0)) AS avg_score 
+                                  FROM book b LEFT JOIN rating r ON b.id_book = r.id_book 
+                                  WHERE b.author = ?
+                                  GROUP BY b.id_book, b.author, b.book_title, b.date_published 
+                                  ORDER BY date_published 
+                                  DESC 
+                                  LIMIT ? 
+                                  OFFSET ?;`,
+                [parseInt(author), numPerPage, (numOfPage * numPerPage)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
     //SELECT b.id_book, b.author, b.book_title, b.date_published, AVG(COALESCE(r.score, 0)) AS avg_score FROM book b LEFT JOIN rating r ON b.id_book = r.id_book GROUP BY b.id_book, b.author, b.book_title, b.date_published ORDER BY avg_score, b.date_published DESC;
 
     getAllOrderedByAvgScoreThenDateWithPagination(numPerPage, numOfPage) {

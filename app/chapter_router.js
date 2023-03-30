@@ -77,12 +77,12 @@ app.get('/chapter/:id/delete', auth.requireChapterOrModerationAuthorship, async 
         if (deleted) {
             res.render(path.join(__dirname, 'views/error.ejs'), {
                 user: req.session.user,
-                problem: "Your chapter has been deleted successfully."
+                problem: "This chapter has been deleted successfully."
             });
         } else {
             res.render(path.join(__dirname, 'views/error.ejs'), {
                 user: req.session.user,
-                problem: "There was a problem deleting your chapter =("
+                problem: "There was a problem deleting this chapter =("
             });
         }
     } else {

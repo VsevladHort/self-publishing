@@ -63,4 +63,21 @@ const deleteBook = async function (id) {
     return book;
 };
 
-module.exports = {publish, getAllForHomePage, getById, getByIdForDisplay, edit, deleteBook, getChapterList}
+const getAllBooksOfUser = async function (numPerPage, numOfPage, id_user) {
+    let user = await userDAO.getById(id_user);
+    if (user) {
+        return await bookDAO.getAllOrderByDateWithPaginationWhereAuthorIs(numPerPage, numOfPage, id_user);
+    }
+    return user;
+};
+
+module.exports = {
+    publish,
+    getAllForHomePage,
+    getById,
+    getByIdForDisplay,
+    edit,
+    deleteBook,
+    getChapterList,
+    getAllBooksOfUser
+}
