@@ -86,4 +86,30 @@ const unbanUser = async function (userToUnban) {
     return false;
 }
 
-module.exports = {findAndAuthenticate, editInformation, deleteUser, banUser, unbanUser, renewInfo}
+const getReadingListById = async function (user, perPage, page) {
+    return await userDao.getReadingListById(user.id_user, perPage, page);
+}
+
+const deleteFromReadingList = async function (id) {
+    return await userDao.deleteFromReadingList(id);
+}
+
+const addToReadingList = async function (id, user) {
+    const check = await userDao.checkIfExistsInUserReadingList(user.id_user, id)
+    if (!check)
+        return await userDao.addToReadingList(id, user);
+    else
+        return false;
+}
+
+module.exports = {
+    findAndAuthenticate,
+    editInformation,
+    deleteUser,
+    banUser,
+    unbanUser,
+    renewInfo,
+    getReadingListById,
+    deleteFromReadingList,
+    addToReadingList
+}

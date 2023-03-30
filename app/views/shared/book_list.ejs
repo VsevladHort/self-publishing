@@ -1,0 +1,18 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Rating</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for(const book of books) { %>
+        <tr>
+            <td><a href="/book/<%= book.id_book %>"><%= book.book_title %></a></td>
+            <td><%= book.author %></td>
+            <td><%= book.avg_score %></td>
+        </tr>
+    <% } %>
+    </tbody>
+</table>

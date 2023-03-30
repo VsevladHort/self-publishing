@@ -23,6 +23,26 @@ class BookDAO {
         });
     }
 
+    getListById(id) {
+        return new Promise((resolve, reject) => {
+            const placeholders = id.map(() => '?').join(',');
+            connectionPool.query(`SELECT b.id_book, b.author, b.book_title, b.date_published, AVG(COALESCE(r.score, 0)) AS avg_score 
+                                  FROM book b 
+                                  LEFT JOIN rating r 
+                                  ON b.id_book = r.id_book 
+                                  WHERE b.id_book IN (${placeholders})
+                                  GROUP BY b.id_book, b.author, b.book_title, b.date_published;`,
+                id,
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
     deleteById(id) {
         return new Promise((resolve, reject) => {
             connectionPool.query('DELETE FROM book WHERE id_book = ?;',

@@ -39,6 +39,7 @@ class ChapterDAO {
             connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
                                   FROM chapter
                                   WHERE id_book = ?
+                                  AND public = true
                                   AND datetime_published > ?
                                   ORDER BY datetime_published ASC
                                   LIMIT 1;`,
@@ -58,6 +59,7 @@ class ChapterDAO {
             connectionPool.query(`SELECT id_chapter, chapter_title, chapter_text, datetime_published, datetime_updated, public, id_book
                                   FROM chapter
                                   WHERE id_book = ?
+                                  AND public = true
                                   AND datetime_published < ?
                                   ORDER BY datetime_published DESC
                                   LIMIT 1;`,

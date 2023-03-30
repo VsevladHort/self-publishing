@@ -21,6 +21,9 @@
                 <h2><%= `${book.book_title}` %></h2>
                 <p>By <%= `${book.author}` %></p>
                 <p>Rating: <%= book.avg_score %></p>
+                <% if (user) { %>
+                    <button id="add_btn" class="btn btn-primary">Add to the reading list</button>
+                <% } %>
                 <hr>
                 <h3>Chapters</h3>
                 <ul id="chapter_list">

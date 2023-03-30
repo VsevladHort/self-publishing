@@ -71,6 +71,13 @@ const getAllBooksOfUser = async function (numPerPage, numOfPage, id_user) {
     return user;
 };
 
+const getListById = async function (id) {
+    id = id.map(x => x.id_book);
+    if (id.length === 0)
+        return [];
+    return await bookDAO.getListById(id);
+}
+
 module.exports = {
     publish,
     getAllForHomePage,
@@ -79,5 +86,6 @@ module.exports = {
     edit,
     deleteBook,
     getChapterList,
-    getAllBooksOfUser
+    getAllBooksOfUser,
+    getListById
 }

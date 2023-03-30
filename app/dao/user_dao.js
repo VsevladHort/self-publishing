@@ -19,6 +19,69 @@ class UserDAO {
         });
     }
 
+    getReadingListById(id, perPage, page) {
+        if (perPage <= 0)
+            perPage = 1;
+        if (page <= 0)
+            page = 1;
+        page -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT id_book FROM user_reading_list WHERE id_user = ? LIMIT ? OFFSET ?;',
+                [id, perPage, (page * perPage)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    checkIfExistsInUserReadingList(id_user, id_book) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT id_book FROM user_reading_list WHERE id_user = ?  AND id_book = ?;',
+                [id_user, id_book],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else if (result.length === 0) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                });
+        });
+    }
+
+    deleteFromReadingList(id) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('DELETE FROM user_reading_list WHERE id_book = ?;',
+                id,
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    addToReadingList(id, user) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('INSERT INTO user_reading_list VALUES (?, ?);',
+                [user.id_user, id],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
     getByEmail(email) {
         return new Promise((resolve, reject) => {
             connectionPool.query('SELECT id_user, pass_hash, role, user_email, user_name, banned FROM user WHERE user_email = ?;',
