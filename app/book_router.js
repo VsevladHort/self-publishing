@@ -37,12 +37,15 @@ app.get('/books/my', auth.requireLogin, async (req, res) => {
         if (!page || page <= 0)
             page = 1;
         const books = await bookService.getAllBooksOfUser(10, page, req.session.user.id_user);
+        const booksFirst = await bookService.getAllBooksOfUser(10, 1, req.session.user.id_user);
+        const hasBooks = booksFirst.length === 0 ? 'false' : 'true';
         res.render(path.join(__dirname, 'views/user_books.ejs'), {
             user: req.session.user,
             problem: false,
             books: books,
             prevPage: page - 1,
-            nextPage: page + 1
+            nextPage: page + 1,
+            hasPublishedBooks: hasBooks
         });
     }
 )
