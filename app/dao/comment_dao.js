@@ -126,6 +126,34 @@ class CommentDAO {
         });
     }
 
+    async createReport(id_user, id_comment, report_content) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('INSERT INTO comment_report VALUES (?, ?, ?);',
+                [id_user, id_comment, report_content],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(true);
+                    }
+                });
+        });
+    }
+
+    async readReport(id_user, id_comment) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT * FROM comment_report WHERE id_user = ? AND id_comment = ?',
+                [id_user, id_comment],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result[0]);
+                    }
+                });
+        });
+    }
+
     async update(comment) {
         return new Promise((resolve, reject) => {
             connectionPool.query('UPDATE comment SET text_comment = ?, datetime_published = ?, datetime_updated = NOW(), public = ? WHERE id_comment = ?;',

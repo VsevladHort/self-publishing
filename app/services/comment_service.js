@@ -112,7 +112,36 @@ const commentService = {
             comment: check,
             urlToGoBack: `/chapter/${check.id_chapter}`
         });
+    },
+
+    async getReportCommentPage(req, res) {
+        let check = await this.checkCommentCorrectness(req, res);
+        if (!check)
+            return;
+        check.author = `${check.user_name}#${check.id_user}`;
+        res.render('report_comment_page.ejs', {
+            user: req.session.user,
+            problem: false,
+            comment: check,
+            urlToGoBack: `/chapter/${check.id_chapter}`
+        });
+    },
+
+    async reportComment(req, res) {
+        let check = await this.checkCommentCorrectness(req, res);
+        if (!check)
+            return;
+        let check1 = await commentDAO.readReport(req.session.user.id_user, check.id_comment)
+        if (check1) {
+            return res.send(JSON.stringify({msg: "You have already reported this comment!"}));
+        }
+        const createdReport = commentDAO.createReport(req.session.user.id_user, check.id_comment, req.body.report_content);
+        if (createdReport)
+            res.send(JSON.stringify({msg: "Successfully reported comment!"}));
+        else
+            res.send(JSON.stringify({msg: "There was a problem reporting comment!"}));
     }
+
 }
 
 module.exports = commentService;

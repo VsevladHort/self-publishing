@@ -10,6 +10,18 @@ app.post('/chapter/:id/comments', auth.requireNotBannedJsonResponse, async (req,
     await commentService.createComment(req, res);
 });
 
+app.get('/comment/:id/report', auth.requireNotBannedJsonResponse, async (req, res) => {
+    await commentService.getReportCommentPage(req, res);
+});
+
+app.post('/comment/:id/report', auth.requireNotBannedJsonResponse, async (req, res) => {
+    await commentService.reportComment(req, res);
+});
+
+app.post('/comment/:id/report', auth.requireNotBannedJsonResponse, async (req, res) => {
+    await commentService.createComment(req, res);
+});
+
 app.get('/comment/:id', auth.requireNotBannedJsonResponse,
     auth.requireCommentAuthorshipOrModerationJsonResponse, async (req, res) => {
         await commentService.getEditCommentPage(req, res);

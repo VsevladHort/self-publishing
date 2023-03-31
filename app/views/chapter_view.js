@@ -79,12 +79,19 @@ function drawComments(res) {
         divCard.appendChild(divCardBody);
         if (comment.editable) {
             const editButton = document.createElement('a');
-            divCard.classList.add('card');
             editButton.classList.add('btn');
             editButton.classList.add('btn-primary');
             editButton.textContent = "Edit";
             editButton.href = `/comment/${comment.id_comment}`
             divCard.appendChild(editButton);
+        }
+        if (add_btn !== null) {
+            const repBtn = document.createElement('a');
+            repBtn.classList.add('btn');
+            repBtn.classList.add('btn-primary');
+            repBtn.textContent = "Report comment";
+            repBtn.href = `/comment/${comment.id_comment}/report`
+            divCard.appendChild(repBtn);
         }
         document.getElementById("reviewAnchor").appendChild(divCard);
 
