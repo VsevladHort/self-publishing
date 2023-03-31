@@ -129,7 +129,7 @@ class ReviewDAO {
 
     async update(review) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('UPDATE review SET text_review = ?, datetime_published = ? datetime_updated = NOW(), public = ?, WHERE id_user = ? AND id_book = ?;',
+            connectionPool.query('UPDATE review SET text_review = ?, datetime_published = ?, datetime_updated = NOW(), public = ? WHERE id_user = ? AND id_book = ?;',
                 [review.text_review, review.datetime_published, review.public, review.id_user, review.id_book],
                 (error, result) => {
                     if (error) {

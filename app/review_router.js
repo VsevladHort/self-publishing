@@ -10,8 +10,19 @@ app.post('/book/:id/reviews', auth.requireNotBannedJsonResponse, async (req, res
     await reviewService.createReview(req, res);
 });
 
-app.put('/book/:id/reviews', auth.requireNotBannedJsonResponse, async (req, res) => {
-    await reviewService.updateReview(req, res);
-});
+app.get('/book/:id_book/reviews/:id_user', auth.requireNotBannedJsonResponse,
+    auth.requireReviewAuthorshipOrModerationJsonResponse, async (req, res) => {
+        await reviewService.getEditReviewPage(req, res);
+    });
+
+app.put('/book/:id_book/reviews/:id_user', auth.requireNotBannedJsonResponse,
+    auth.requireReviewAuthorshipOrModerationJsonResponse, async (req, res) => {
+        await reviewService.updateReview(req, res);
+    });
+
+app.delete('/book/:id_book/reviews/:id_user', auth.requireNotBannedJsonResponse,
+    auth.requireReviewAuthorshipOrModerationJsonResponse, async (req, res) => {
+        await reviewService.deleteReview(req, res);
+    });
 
 module.exports = app;

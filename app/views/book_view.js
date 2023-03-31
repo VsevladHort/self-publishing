@@ -247,14 +247,12 @@ function drawReviews(res) {
         divCardBody.appendChild(p2);
         divCard.appendChild(divCardBody);
         if (review.editable) {
-            const editButton = document.createElement('editButton');
+            const editButton = document.createElement('a');
             divCard.classList.add('card');
             editButton.classList.add('btn');
             editButton.classList.add('btn-primary');
             editButton.textContent = "Edit";
-            editButton.addEventListener('click', () => {
-
-            });
+            editButton.href = `/book/${review.id_book}/reviews/${review.id_user}`
             divCard.appendChild(editButton);
         }
         document.getElementById("reviewAnchor").appendChild(divCard);

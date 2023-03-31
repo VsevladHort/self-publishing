@@ -1,6 +1,8 @@
 const path = require("path");
 const bookService = require('./services/book_service');
 const chapterService = require('./services/chapter_service');
+const reviewsDAOImport = require('./dao/reviews_dao');
+const reviewsDAO = new reviewsDAOImport();
 
 const auth = {
     requireLogin: (req, res, next) => {
@@ -96,6 +98,23 @@ const auth = {
         next();
     },
 
+    requireReviewAuthorshipOrModerationJsonResponse: async (req, res, next) => {
+        if (isNaN(req.params.id_book) || isNaN(parseInt(req.params.id_user))) {
+            res.status(400).send(JSON.stringify({msg: "Bad parameters"}));
+            return;
+        }
+        const review = await reviewsDAO.getById(parseInt(req.params.id_user), parseInt(req.params.id_book));
+        if (!review) {
+            return res.status(404).send(JSON.stringify({msg: "Given user has not published a review for given book"}));
+        }
+        if (!req.session.user) {
+            return res.status(400).send(JSON.stringify({msg: "Only logged in users are allowed to do this!"}));
+        } else if (req.session.user.id_user !== review.id_user && req.session.user.role !== 'moderator') {
+            return res.status(400).send(JSON.stringify({msg: 'Only author of the review or moderator is allowed to do this!'}));
+        }
+        next();
+    },
+
     requireChapterOrModerationAuthorship: async (req, res, next) => {
         if (isNaN(req.params.id)) {
             res.status(400).send();
@@ -111,11 +130,12 @@ const auth = {
         } else if (req.session.user.id_user !== book.author && req.session.user.role !== 'moderator') {
             return res.render(path.join(__dirname, 'views/error.ejs'), {
                 user: req.session.user,
-                problem: 'Only author of the book is allowed to do this!'
+                problem: 'Only author of the book or moderator is allowed to do this!'
             })
         }
         next();
     },
+
 
     requireChapterAuthorship: async (req, res, next) => {
         if (isNaN(req.params.id)) {
