@@ -172,6 +172,34 @@ class ChapterDAO {
                 });
         });
     }
+
+    async createReport(id_user, id_chapter, report_content) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('INSERT INTO chapter_report VALUES (?, ?, ?);',
+                [id_user, id_chapter, report_content],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(true);
+                    }
+                });
+        });
+    }
+
+    async readReport(id_user, id_chapter) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT * FROM chapter_report WHERE id_user = ? AND id_chapter = ?',
+                [id_user, id_chapter],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result[0]);
+                    }
+                });
+        });
+    }
 }
 
 module.exports = ChapterDAO;

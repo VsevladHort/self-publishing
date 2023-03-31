@@ -21,6 +21,7 @@
     <% } %>
     <% if (user) { %>
         <button id="add_btn" class="btn btn-primary">Add to bookmarks</button>
+        <a href="/chapter/<%= chapter.id_chapter %>/report" class="btn btn-secondary">Report</a>
     <% } %>
     <h1><%= chapter.chapter_title %></h1>
     <%- chapter.chapter_text %>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report comment</title>
+    <title>Report chapter</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
@@ -17,13 +17,12 @@
             <div class="card">
                 <%- include('shared/alert.ejs') %>
                 <div class="card-header">
-                    You want to repost comment of user <%= comment.author %>
+                    You want to repost chapter of user <%= chapter.author %>
                 </div>
                 <div class="card-body">
                     <form>
-                        <input type="hidden" id="id_book" value="<%- comment.id_chapter %>">
-                        <input type="hidden" id="id_user" value="<%- comment.id_user %>">
-                        <input type="hidden" id="id_comment" value="<%- comment.id_comment %>">
+                        <input type="hidden" id="id_chapter" value="<%- chapter.id_chapter %>">
+                        <input type="hidden" id="id_book" value="<%- chapter.id_book %>">
                         <div class="form-group">
                             <label for="report_content">Describe why you want to report it: </label>
                             <input type="text" class="form-control" id="report_content" name="report_content" required
@@ -42,7 +41,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-<script src="/views/report_comment_page.js"></script>
+<script src="/views/report_chapter_page.js"></script>
 <%- include('shared/edit_btn_init.ejs') %>
 </body>
 </html>

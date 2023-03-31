@@ -88,7 +88,7 @@ function drawComments(res) {
         if (add_btn !== null) {
             const repBtn = document.createElement('a');
             repBtn.classList.add('btn');
-            repBtn.classList.add('btn-primary');
+            repBtn.classList.add('btn-secondary');
             repBtn.textContent = "Report comment";
             repBtn.href = `/comment/${comment.id_comment}/report`
             divCard.appendChild(repBtn);

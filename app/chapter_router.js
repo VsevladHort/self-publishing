@@ -3,6 +3,7 @@ const bookService = require("./services/book_service");
 const path = require("path");
 const auth = require("./auth_middleware");
 const express = require("express");
+const commentService = require("./services/comment_service");
 const app = express.Router();
 
 app.get('/chapter/:id', async (req, res) => {
@@ -93,6 +94,14 @@ app.get('/chapter/:id/delete', auth.requireChapterOrModerationAuthorship, async 
             problem: "Are you sure you want to delete this chapter?"
         });
     }
+});
+
+app.get('/chapter/:id/report', auth.requireNotBannedJsonResponse, async (req, res) => {
+    await chapterService.getReportCommentPage(req, res);
+});
+
+app.post('/chapter/:id/report', auth.requireNotBannedJsonResponse, async (req, res) => {
+    await chapterService.reportComment(req, res);
 });
 
 module.exports = app;

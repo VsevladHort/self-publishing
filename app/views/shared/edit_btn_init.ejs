@@ -1,0 +1,14 @@
+<script>
+    const saveBtn = document.getElementById("edit");
+
+    saveBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        saveDoc(report_content.value).then(async (resp) => {
+            message.style.display = 'block';
+            messageSpan.textContent = resp;
+        }).catch(async (resp) => {
+            message.style.display = 'block';
+            messageSpan.textContent = resp;
+        })
+    });
+</script>

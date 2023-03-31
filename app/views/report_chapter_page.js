@@ -1,8 +1,8 @@
 const report_content = document.getElementById("report_content");
-const id_comment = document.getElementById("id_comment");
+const id_chapter = document.getElementById("id_chapter");
 
 function saveDoc(text_review1) {
-    return fetch(`/comment/${id_comment.value}/report`, {
+    return fetch(`/chapter/${id_chapter.value}/report`, {
         method: "POST",
         body: JSON.stringify({
             report_content: text_review1
