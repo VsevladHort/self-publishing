@@ -237,7 +237,7 @@ function drawReviews(res) {
         const p2 = document.createElement('p');
         p2.classList.add("card-text");
         if (!review.public) {
-            divCard.style.opacity = "0.5";
+            divCard.style.opacity = "0.6";
         }
         h4.textContent = `By ${review.author}`;
         p1.textContent = `Rating: ${review.score === 'null' ? 'not given' : review.score}/5`;
@@ -246,7 +246,19 @@ function drawReviews(res) {
         divCardBody.appendChild(p1);
         divCardBody.appendChild(p2);
         divCard.appendChild(divCardBody);
+        if (review.editable) {
+            const editButton = document.createElement('editButton');
+            divCard.classList.add('card');
+            editButton.classList.add('btn');
+            editButton.classList.add('btn-primary');
+            editButton.textContent = "Edit";
+            editButton.addEventListener('click', () => {
+
+            });
+            divCard.appendChild(editButton);
+        }
         document.getElementById("reviewAnchor").appendChild(divCard);
+
     });
 }
 
