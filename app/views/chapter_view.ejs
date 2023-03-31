@@ -31,6 +31,26 @@
         <a href="<%= nextPage %>" class="btn btn-primary">Next</a>
     <% } %>
 </div>
+<% if (user) { %>
+    <div class="container my-5" id="submiting_comment">
+        <h3>Add a comment</h3>
+        <form method="POST">
+            <div class="form-group">
+                <label for="text_comment">Review</label>
+                <textarea class="form-control" id="text_comment" rows="3" name="text_comment"
+                          placeholder="Enter your comment" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" id="publish_comment">Submit a comment</button>
+        </form>
+    </div>
+<% } %>
+<div class="container my-5">
+    <h3>Comments</h3>
+    <div id="reviewAnchor">
+    </div>
+    <button class="btn btn-primary" id="prev1">Previous page</button>
+    <button class="btn btn-primary" id="next1">Next page</button>
+</div>
 
 <%- include('shared/alert_js.ejs') %>
 <script src="/views/chapter_view.js"></script>

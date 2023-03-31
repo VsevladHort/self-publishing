@@ -8,6 +8,7 @@ const authenticationRouter = require('./authentication_router');
 const chapterRouter = require('./chapter_router');
 const bookmarkRouter = require('./bookmark_router');
 const reviewRouter = require('./review_router');
+const commentRouter = require('./comment_router');
 const app = express();
 const port = process.env.PORT || 3000;
 const path = require("path");
@@ -40,6 +41,7 @@ app.use(profileRouter);
 app.use(authenticationRouter);
 app.use(bookmarkRouter);
 app.use(reviewRouter);
+app.use(commentRouter);
 
 app.get('/moderator', auth.requireModerator, async (req, res) => {
     res.send(`${req.session.user} + <a href="/logout"> Logout</a>`);

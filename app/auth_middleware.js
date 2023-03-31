@@ -3,6 +3,8 @@ const bookService = require('./services/book_service');
 const chapterService = require('./services/chapter_service');
 const reviewsDAOImport = require('./dao/reviews_dao');
 const reviewsDAO = new reviewsDAOImport();
+const commentsDaoImport = require('./dao/comment_dao');
+const commentsDAO = new commentsDaoImport();
 
 const auth = {
     requireLogin: (req, res, next) => {
@@ -111,6 +113,23 @@ const auth = {
             return res.status(400).send(JSON.stringify({msg: "Only logged in users are allowed to do this!"}));
         } else if (req.session.user.id_user !== review.id_user && req.session.user.role !== 'moderator') {
             return res.status(400).send(JSON.stringify({msg: 'Only author of the review or moderator is allowed to do this!'}));
+        }
+        next();
+    },
+
+    requireCommentAuthorshipOrModerationJsonResponse: async (req, res, next) => {
+        if (isNaN(req.params.id)) {
+            res.status(400).send(JSON.stringify({msg: "Bad parameters"}));
+            return;
+        }
+        const comment = await commentsDAO.getById(parseInt(req.params.id));
+        if (!comment) {
+            return res.status(404).send(JSON.stringify({msg: "Comment does not exist!"}));
+        }
+        if (!req.session.user) {
+            return res.status(400).send(JSON.stringify({msg: "Only logged in users are allowed to do this!"}));
+        } else if (req.session.user.id_user !== comment.id_user && req.session.user.role !== 'moderator') {
+            return res.status(400).send(JSON.stringify({msg: 'Only author of the comment or moderator is allowed to do this!'}));
         }
         next();
     },
