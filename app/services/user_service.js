@@ -134,6 +134,42 @@ const addOrReplaceRatingForBook = async function (score, id_user, id_book) {
         return await userDao.insertRatingForBook(score, id_user, id_book);
 }
 
+const getUserDetailsPage = async function (req, res) {
+    const id_user = parseInt(req.params.id);
+    if (isNaN(id_user))
+        return res.status(400).send(JSON.stringify({msg: "Bad id"}));
+    const user = await userDao.getById(id_user);
+    if (!user) {
+        return res.status(404).send(JSON.stringify({msg: "User not found"}));
+    }
+    return res.render("user_view.ejs", {
+        user: req.session.user,
+        userToView: user,
+        problem: false,
+        urlToGoBack: req.params.urlToGoBack
+    });
+}
+
+const processBanUserRequest = async function (req, res) {
+    const id_user = parseInt(req.params.id);
+    if (isNaN(id_user))
+        return res.status(400).send(JSON.stringify({msg: "Bad id"}));
+    const user = await userDao.getById(id_user);
+    if (!user) {
+        return res.status(404).send(JSON.stringify({msg: "User not found"}));
+    }
+    if (req.session.user.id_user === user.id_user) {
+        return res.status(403).send(JSON.stringify({msg: "Impossible to ban yourself"}));
+    }
+    user.banned = req.body.banned ? 1 : 0;
+    user.pass_hash = null;
+    let updated = await userDao.update(user);
+    if (updated)
+        return res.status(200).send(JSON.stringify({msg: "Successfully set new banned property value for user"}));
+    else
+        return res.status(404).send(JSON.stringify({msg: "Problem setting banned property for user"}));
+}
+
 module.exports = {
     findAndAuthenticate,
     editInformation,
@@ -148,5 +184,7 @@ module.exports = {
     deleteFromBookmarksList,
     addToBookmarksList,
     findRatingForBook,
-    addOrReplaceRatingForBook
+    addOrReplaceRatingForBook,
+    getUserDetailsPage,
+    processBanUserRequest
 }

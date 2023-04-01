@@ -18,7 +18,8 @@ app.get('/chapter/:id', async (req, res) => {
     const book = await bookService.getById(chapter.id_book);
     let isAuthor = req.session.user ? (req.session.user.id_user === book.author
         || req.session.user.role === 'moderator') : false
-    if (chapter)
+    if (chapter) {
+        chapter.id_user = book.author;
         res.render(path.join(__dirname, 'views/chapter_view.ejs'), {
             user: req.session.user,
             problem: false,
@@ -27,7 +28,7 @@ app.get('/chapter/:id', async (req, res) => {
             nextPage: next ? next.id_chapter : false,
             isAuthor: isAuthor
         });
-    else
+    } else
         res.render(path.join(__dirname, 'views/error.ejs'), {
             user: req.session.user,
             problem: "The chapter your tried to access does not exist!"

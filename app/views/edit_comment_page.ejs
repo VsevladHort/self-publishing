@@ -18,6 +18,10 @@
                 <%- include('shared/alert.ejs') %>
                 <div class="card-header">
                     Comment of user <%= comment.author %>
+                    <% if (user && user.role === 'moderator') { %>
+                        <a href="/user/<%= comment.id_user %>?urlToGoBack=<%- `/comment/${comment.id_comment}` %>">
+                            Details</a>
+                    <% } %>
                 </div>
                 <div class="card-body">
                     <form>

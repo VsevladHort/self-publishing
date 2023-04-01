@@ -23,6 +23,10 @@
         <button id="add_btn" class="btn btn-primary">Add to bookmarks</button>
         <a href="/chapter/<%= chapter.id_chapter %>/report" class="btn btn-secondary">Report</a>
     <% } %>
+    <% if (user && user.role === 'moderator') { %>
+        <a href="/user/<%= chapter.id_user %>?urlToGoBack=<%- `/chapter/${chapter.id_chapter}` %>"
+           class="btn btn-secondary"> Author details</a>
+    <% } %>
     <h1><%= chapter.chapter_title %></h1>
     <%- chapter.chapter_text %>
     <% if (prevPage) { %>

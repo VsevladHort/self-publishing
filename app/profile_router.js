@@ -54,4 +54,12 @@ app.post('/profile', auth.requireLogin, async (req, res) => {
     }
 });
 
+app.get('/user/:id', auth.requireLogin, auth.requireModerator, async (req, res) => {
+    return userService.getUserDetailsPage(req, res);
+});
+
+app.post('/user/:id/ban', auth.requireLogin, auth.requireModerator, async (req, res) => {
+    return userService.processBanUserRequest(req, res);
+});
+
 module.exports = app;
