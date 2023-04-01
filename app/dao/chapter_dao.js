@@ -189,13 +189,46 @@ class ChapterDAO {
 
     async readReport(id_user, id_chapter) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('SELECT * FROM chapter_report WHERE id_user = ? AND id_chapter = ?',
+            connectionPool.query('SELECT * FROM chapter_report WHERE id_user = ? AND id_chapter = ?;',
                 [id_user, id_chapter],
                 (error, result) => {
                     if (error) {
                         reject(error);
                     } else {
                         resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    async deleteReportByIds(id_user, id_chapter) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('DELETE FROM chapter_report WHERE id_user = ? AND id_chapter = ?;',
+                [id_user, id_chapter],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    async getReportsForChapters(number, page) {
+        if (number <= 0)
+            number = 1;
+        if (page <= 0)
+            page = 1;
+        page -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT * FROM chapter_report LIMIT ? OFFSET ?;',
+                [number, (page * number)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
                     }
                 });
         });

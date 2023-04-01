@@ -4,8 +4,9 @@
     <a class="nav-link" href="/books/my">My books</a>
     <a class="nav-link" href="/books/my/reading">Reading list</a>
     <a class="nav-link" href="/bookmarks/my">Bookmarks</a>
-
-
+    <% if (user.role === 'moderator') { %>
+        <a class="nav-link" href="/reports">View reports</a>
+    <% } %>
     <a class="nav-link" href="/logout">Logout</a>
 <% } %>
 <% if (!user) { %>

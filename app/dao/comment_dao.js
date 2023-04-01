@@ -142,13 +142,46 @@ class CommentDAO {
 
     async readReport(id_user, id_comment) {
         return new Promise((resolve, reject) => {
-            connectionPool.query('SELECT * FROM comment_report WHERE id_user = ? AND id_comment = ?',
+            connectionPool.query('SELECT * FROM comment_report WHERE id_user = ? AND id_comment = ?;',
                 [id_user, id_comment],
                 (error, result) => {
                     if (error) {
                         reject(error);
                     } else {
                         resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    async deleteReportByIds(id_user, id_comment) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query('DELETE FROM comment_report WHERE id_user = ? AND id_comment = ?;',
+                [id_user, id_comment],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    async getReportsForComments(number, page) {
+        if (number <= 0)
+            number = 1;
+        if (page <= 0)
+            page = 1;
+        page -= 1;
+        return new Promise((resolve, reject) => {
+            connectionPool.query('SELECT * FROM comment_report LIMIT ? OFFSET ?;',
+                [number, (page * number)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
                     }
                 });
         });

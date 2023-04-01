@@ -146,7 +146,7 @@ const getUserDetailsPage = async function (req, res) {
         user: req.session.user,
         userToView: user,
         problem: false,
-        urlToGoBack: req.params.urlToGoBack
+        urlToGoBack: req.query.urlToGoBack
     });
 }
 

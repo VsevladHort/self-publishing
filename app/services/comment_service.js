@@ -137,9 +137,30 @@ const commentService = {
         }
         const createdReport = commentDAO.createReport(req.session.user.id_user, check.id_comment, req.body.report_content);
         if (createdReport)
-            res.send(JSON.stringify({msg: "Successfully reported comment!"}));
+            return res.send(JSON.stringify({msg: "Successfully reported comment!"}));
         else
-            res.send(JSON.stringify({msg: "There was a problem reporting comment!"}));
+            return res.send(JSON.stringify({msg: "There was a problem reporting comment!"}));
+    },
+
+    async getReportsForComments(req, res) {
+        const page = parseInt(req.query.page);
+        if (isNaN(page))
+            return res.status(400).send(JSON.stringify({msg: "Bad page"}));
+        let result = await commentDAO.getReportsForComments(10, page);
+        return res.send(result);
+    },
+
+    async deleteReportForComment(req, res) {
+        const id_comment = parseInt(req.params.id_comment);
+        const id_user = parseInt(req.params.id_user);
+        if (isNaN(id_user) || isNaN(id_comment))
+            return res.status(400).send(JSON.stringify({msg: "Bad ids"}));
+        let result = await commentDAO.deleteReportByIds(id_user, id_comment);
+        if (result) {
+            return res.status(200).send(JSON.stringify({msg: "Successfully deleted report"}));
+        } else {
+            return res.status(500).send(JSON.stringify({msg: "There was a problem deleting report"}));
+        }
     }
 
 }

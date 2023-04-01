@@ -23,6 +23,27 @@ async function getReportCommentPage(req, res) {
     });
 }
 
+async function getReportsForChapters(req, res) {
+    const page = parseInt(req.query.page);
+    if (isNaN(page))
+        return res.status(400).send(JSON.stringify({msg: "Bad page"}));
+    let result = await chapterDAO.getReportsForChapters(10, page);
+    return res.send(result);
+}
+
+async function deleteReportForChapter(req, res) {
+    const id_chapter = parseInt(req.params.id_chapter);
+    const id_user = parseInt(req.params.id_user);
+    if (isNaN(id_chapter) || isNaN(id_user))
+        return res.status(400).send(JSON.stringify({msg: "Bad ids"}));
+    let result = await chapterDAO.deleteReportByIds(id_user, id_chapter);
+    if (result) {
+        return res.status(200).send(JSON.stringify({msg: "Successfully deleted report"}));
+    } else {
+        return res.status(500).send(JSON.stringify({msg: "There was a problem deleting report"}));
+    }
+}
+
 async function reportComment(req, res) {
     const id_chapter = parseInt(req.params.id);
     if (isNaN(id_chapter))
@@ -109,5 +130,7 @@ module.exports = {
     getChaptersForBookFilteredByPublic,
     getChapterListById,
     getReportCommentPage,
-    reportComment
+    reportComment,
+    getReportsForChapters,
+    deleteReportForChapter
 };
