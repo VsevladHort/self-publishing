@@ -100,6 +100,20 @@ const auth = {
         next();
     },
 
+    requireAuthorshipJsonResponseIdBook: async (req, res, next) => {
+        if (isNaN(req.params.id_book)) {
+            res.status(400).send();
+            return;
+        }
+        const book = await bookService.getById(parseInt(req.params.id_book));
+        if (!req.session.user) {
+            return res.send(JSON.stringify({msg: "Only logged in users are allowed to do this!"}));
+        } else if (req.session.user.id_user !== book.author) {
+            return res.send(JSON.stringify({msg: 'Only author of the book is allowed to do this!'}));
+        }
+        next();
+    },
+
     requireReviewAuthorshipOrModerationJsonResponse: async (req, res, next) => {
         if (isNaN(req.params.id_book) || isNaN(parseInt(req.params.id_user))) {
             res.status(400).send(JSON.stringify({msg: "Bad parameters"}));

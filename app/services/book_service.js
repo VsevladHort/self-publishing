@@ -89,6 +89,71 @@ const getListById = async function (id) {
     return await bookDAO.getListById(id);
 }
 
+const getAllBookTags = async function (id) {
+    let book = await bookDAO.getById(id);
+    if (book) {
+        return await bookDAO.getAllTagsOfBook(id);
+    }
+    return book;
+}
+
+const getAllTags = async function () {
+    return await bookDAO.getAllTags();
+}
+
+async function checkTagAndBookIdsFromReq(req, res) {
+    const id_book = parseInt(req.params.id_book);
+    const id_tag = parseInt(req.params.id_tag);
+    if (isNaN(id_book) || isNaN(id_tag))
+        return 400
+    let check1 = await bookDAO.getTag(id_tag);
+    let check2 = await bookDAO.getById(id_book);
+    if (!check1 || !check2) {
+        return 404
+    }
+    return {id_book: id_book, id_tag: id_tag}
+}
+
+async function addTagToBook(req, res) {
+    const checkResult = await checkTagAndBookIdsFromReq(req, res);
+    if (checkResult === 400) {
+        return res.status(400).send(JSON.stringify({msg: "Bad ids"}));
+    } else if (checkResult === 404) {
+        return res.status(404).send(JSON.stringify({msg: "Tag or book not found!"}))
+    }
+    const {id_book, id_tag} = checkResult
+    let check = await bookDAO.checkIfExistsForBook(id_book, id_tag);
+    if (check) {
+        return res.status(400).send(JSON.stringify({msg: "Book already has the tag!"}))
+    }
+    let result = await bookDAO.addTagToBook(id_book, id_tag)
+    if (result) {
+        return res.status(200).send(JSON.stringify({msg: "Successfully added tag"}));
+    } else {
+        return res.status(500).send(JSON.stringify({msg: "There was a problem adding tag"}));
+    }
+}
+
+async function deleteTagFromBook(req, res) {
+    const checkResult = await checkTagAndBookIdsFromReq(req, res);
+    if (checkResult === 400) {
+        return res.status(400).send(JSON.stringify({msg: "Bad ids"}));
+    } else if (checkResult === 404) {
+        return res.status(404).send(JSON.stringify({msg: "Tag or book not found!"}))
+    }
+    const {id_book, id_tag} = checkResult
+    let check = await bookDAO.checkIfExistsForBook(id_book, id_tag);
+    if (!check) {
+        return res.status(404).send(JSON.stringify({msg: "Book did not have given tag!"}))
+    }
+    let result = await bookDAO.removeTagFromBook(id_book, id_tag)
+    if (result) {
+        return res.status(200).send(JSON.stringify({msg: "Successfully removed tag"}));
+    } else {
+        return res.status(500).send(JSON.stringify({msg: "There was a problem removing tag"}));
+    }
+}
+
 module.exports = {
     publish,
     getAllForHomePage,
@@ -99,5 +164,9 @@ module.exports = {
     getChapterList,
     getAllBooksOfUser,
     getListById,
-    getAllForHomePageWhereTitleIsLike
+    getAllForHomePageWhereTitleIsLike,
+    getAllTags,
+    getAllBookTags,
+    addTagToBook,
+    deleteTagFromBook
 }

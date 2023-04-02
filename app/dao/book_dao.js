@@ -189,6 +189,128 @@ class BookDAO {
                 });
         });
     }
+
+    async getAllTagsOfBook(id) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_tag, tag_name
+                                  FROM tag 
+                                  NATURAL JOIN book_tags
+                                  WHERE id_book = ?
+                                  ORDER BY tag_name;`,
+                [id],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    async checkIfExistsForBook(id_book, id_tag) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT *
+                                  FROM book_tags
+                                  WHERE id_book = ?
+                                  AND id_tag = ?;`,
+                [id_book, id_tag],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result[0]);
+                    }
+                });
+        });
+    }
+
+    async getAllTags() {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_tag, tag_name
+                                  FROM tag 
+                                  ORDER BY tag_name;`,
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    async getTag(id) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT id_tag, tag_name
+                                  FROM tag 
+                                  WHERE id_tag = ?`,
+                [id],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
+    async addTagToBook(id_book, id_tag) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`INSERT INTO book_tags VALUE(?, ?)`,
+                [id_book, id_tag],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    async removeTagFromBook(id_book, id_tag) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`DELETE FROM book_tags WHERE id_book = ? AND id_tag = ?;`,
+                [id_book, id_tag],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
+
+    async addTag(name) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`INSERT INTO tag VALUES(NULL, ?);`,
+                [name],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.insertId);
+                    }
+                });
+        });
+    }
+
+    async removeTag(name) {
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`DELETE FROM tag WHERE id_tag = ?`,
+                [name],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result.affectedRows);
+                    }
+                });
+        });
+    }
 }
 
 module.exports = BookDAO;

@@ -12,18 +12,29 @@
     <%- include('shared/user_nav.ejs') %>
 </nav>
 <div class="container mt-5">
+    <%- include('shared/alert.ejs') %>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
                     Book Info
                 </div>
+                <input type="hidden" value="<%= book.id_book %>" id="id_book">
                 <div class="card-body">
                     <form method="post">
                         <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" class="form-control" id="title" name="title" required
                                    value="<%= `${book.book_title}` %>">
+                        </div>
+                        <div id="bookTagsAnchor">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="tags">Tags</label>
+                            <select class="form-control" id="tags" name="tags" multiple>
+
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-primary" id="edit">Save new info</button>
                         <a class="btn btn-primary" id="back" href=<%= `/book/${book.id_book}` %>>Go back</a>
@@ -45,5 +56,111 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+<%- include('shared/alert_js.ejs') %>
+<script>
+    const bookTagsAnchor = document.getElementById("bookTagsAnchor");
+    const id_book = document.getElementById("id_book").value;
+
+    getBookTags().then(r => drawBookTags(r))
+
+    getAllTags().then(r => {
+        console.log(r)
+        let innerHtml = "";
+        r.forEach(tag => {
+            innerHtml += `<option value="${tag.id_tag}" onclick="optionClick(${tag.id_tag})">
+            ${tag.tag_name}
+        </option>`;
+        });
+        document.getElementById("tags").innerHTML = innerHtml;
+    })
+
+    function drawBookTags(res) {
+        bookTagsAnchor.innerHTML = "";
+        console.log(res);
+        res.forEach(function (tag) {
+            const span = document.createElement('span');
+            const i = document.createElement('i');
+            span.classList.toggle('badge')
+            span.classList.toggle('bg-secondary')
+            span.classList.toggle('me-1')
+            i.classList.toggle('bi')
+            i.classList.toggle('bi-x')
+            span.appendChild(i);
+            span.textContent = tag.tag_name
+            span.addEventListener('click', () => {
+                removeTag(tag.id_tag).then((r) => {
+                        message.style.display = 'block';
+                        messageSpan.textContent = r.msg;
+                        getBookTags().then(r => drawBookTags(r))
+                    }
+                ).catch((r) => {
+                    message.style.display = 'block';
+                    messageSpan.textContent = r;
+                })
+            })
+            bookTagsAnchor.appendChild(span)
+        });
+    }
+
+    function getBookTags() {
+        return fetch(`/book/${id_book}/tags`)
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function (text) {
+                        throw new Error('Error loading document: ' + text);
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function getAllTags() {
+        return fetch(`/tags`)
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function (text) {
+                        throw new Error('Error loading document: ' + text);
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function removeTag(id) {
+        return fetch(`/book/${id_book}/tags/${id}`, {method: "DELETE"})
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function (text) {
+                        throw new Error('Error loading document: ' + text);
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function addTag(id) {
+        return fetch(`/book/${id_book}/tags/${id}`, {method: "POST"})
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function (text) {
+                        throw new Error('Error loading document: ' + text);
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function optionClick(id_tag) {
+        addTag(id_tag).then((r) => {
+                message.style.display = 'block';
+                messageSpan.textContent = r.msg;
+                getBookTags().then(r => drawBookTags(r))
+            }
+        ).catch((r) => {
+            message.style.display = 'block';
+            messageSpan.textContent = r;
+        })
+    }
+</script>
 </body>
 </html>

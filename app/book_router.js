@@ -147,7 +147,9 @@ app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
         res.render(path.join(__dirname, 'views/edit_book.ejs'), {
             user: req.session.user,
             problem: false,
-            book: book
+            book: book,
+            availableTags: await bookService.getAllTags(),
+            bookTags: await bookService.getAllBookTags(book.id_book)
         });
     } else {
         res.render(path.join(__dirname, 'views/error.ejs'), {
@@ -155,6 +157,32 @@ app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
             problem: "Something went wrong, the book may not exist =("
         });
     }
+});
+
+app.get('/book/:id/tags', auth.requireAuthorshipJsonResponse, async (req, res) => {
+    if (isNaN(req.params.id)) {
+        res.status(404).send();
+        return;
+    }
+    const book = await bookService.getAllBookTags(parseInt(req.params.id))
+    if (book) {
+        return res.send(book);
+    } else {
+        res.status(500).send(JSON.stringify({msg: "There was a problem getting all tags for book"}));
+    }
+});
+
+app.post('/book/:id_book/tags/:id_tag', auth.requireAuthorshipJsonResponseIdBook, async (req, res) => {
+    return bookService.addTagToBook(req, res);
+});
+
+app.delete('/book/:id_book/tags/:id_tag', auth.requireAuthorshipJsonResponseIdBook, async (req, res) => {
+    return bookService.deleteTagFromBook(req, res);
+});
+
+app.get('/tags', async (req, res) => {
+    const result = await bookService.getAllTags();
+    return res.send(result);
 });
 
 app.post('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
