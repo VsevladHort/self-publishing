@@ -12,7 +12,12 @@
     <%- include('shared/user_nav.ejs') %>
 </nav>
 <div class="container">
-    <h1>Recommendations</h1>
+    <h1>
+        <% if (typeof searchTerm !== 'undefined' && searchTerm) { %>Books
+        <% } %>
+        <% if (typeof searchTerm === 'undefined' || !searchTerm) { %>Recommendations
+        <% } %>
+    </h1>
     <table class="table">
         <thead>
         <tr>
@@ -33,10 +38,12 @@
     </table>
     <div class="text-center">
         <% if (prevPage) { %>
-            <a href="/?page=<%= prevPage %>" class="btn btn-primary">Previous</a>
+            <a href="/?page=<%= prevPage %><% if (searchTerm) { %>&title=<%= searchTerm %><% } %>"
+               class="btn btn-primary">Previous</a>
         <% } %>
         <% if (nextPage && books.length) { %>
-            <a href="/?page=<%= nextPage %>" class="btn btn-primary">Next</a>
+            <a href="/?page=<%= nextPage %><% if (searchTerm) { %>&title=<%= searchTerm %><% } %>"
+               class="btn btn-primary">Next</a>
         <% } %>
     </div>
 </div>

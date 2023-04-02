@@ -34,6 +34,17 @@ const getAllForHomePage = async function (numPerPage, numOfPage) {
     return booksWithAuthorNames;
 };
 
+const getAllForHomePageWhereTitleIsLike = async function (numPerPage, numOfPage, title) {
+    const books = await bookDAO.getAllOrderedByAvgScoreThenDateWithPaginationWhereTitleIsLike(numPerPage, numOfPage, title);
+    const booksWithAuthorNames = [];
+    for (let book of books) {
+        const author = await userDAO.getById(book.author);
+        book.author = `${author.user_name}#${author.id_user}`;
+        booksWithAuthorNames.push(book);
+    }
+    return booksWithAuthorNames;
+};
+
 const getById = async function (id) {
     return await bookDAO.getById(id);
 };
@@ -87,5 +98,6 @@ module.exports = {
     deleteBook,
     getChapterList,
     getAllBooksOfUser,
-    getListById
+    getListById,
+    getAllForHomePageWhereTitleIsLike
 }

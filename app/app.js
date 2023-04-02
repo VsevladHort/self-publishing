@@ -26,13 +26,26 @@ app.get("/", async function (req, res) {
     let page = parseInt(req.query.page);
     if (!page || page <= 0)
         page = 1;
+    let title = req.query.title;
+    if (typeof title !== "undefined" && title !== null && title !== "") {
+        let books = await bookService.getAllForHomePageWhereTitleIsLike(10, page, title);
+        return res.render(path.join(__dirname, 'views/home.ejs'), {
+            user: req.session.user,
+            problem: false,
+            books: books,
+            prevPage: page - 1,
+            nextPage: page + 1,
+            searchTerm: title
+        });
+    }
     let books = await bookService.getAllForHomePage(10, page);
     res.render(path.join(__dirname, 'views/home.ejs'), {
         user: req.session.user,
         problem: false,
         books: books,
         prevPage: page - 1,
-        nextPage: page + 1
+        nextPage: page + 1,
+        searchTerm: false
     });
 });
 

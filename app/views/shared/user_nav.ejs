@@ -13,3 +13,14 @@
     <a class="nav-link" href="/register">Register</a>
     <a class="nav-link" href="/login">Login</a>
 <% } %>
+<form class="form-inline ms-auto" action="/">
+    <div class="input-group">
+        <label hidden="hidden" for="search_term"></label>
+        <input type="text" class="form-control" placeholder="Search for a book title" id="search_term" name="title"
+               value="<% if (typeof searchTerm !== 'undefined' && searchTerm) { %><%= searchTerm %><% } %>">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary" id="search_btn">Search</button>
+            <a class="btn btn-link ml-2" href="/search">Advanced Search</a>
+        </div>
+    </div>
+</form>
