@@ -162,6 +162,38 @@ class BookDAO {
         });
     }
 
+    getAllOrderedByAvgScoreThenDateWithPaginationWhereTitleIsLikeAndHasTags(numPerPage, numOfPage, likeString, tagArray) {
+        if (numPerPage <= 0)
+            numPerPage = 1;
+        if (numOfPage <= 0)
+            numOfPage = 1;
+        numOfPage -= 1;
+        const placeholders = tagArray.map(() => '?').join(',');
+        return new Promise((resolve, reject) => {
+            connectionPool.query(`SELECT b.id_book, b.author, b.book_title, b.date_published, AVG(COALESCE(r.score, 0)) AS avg_score 
+FROM book b 
+LEFT JOIN rating r 
+ON b.id_book = r.id_book 
+LEFT OUTER JOIN book_tags ON b.id_book = book_tags.id_book
+LEFT OUTER JOIN tag t ON book_tags.id_tag = t.id_tag
+WHERE b.book_title LIKE ? 
+AND t.tag_name IN (${placeholders})
+GROUP BY b.id_book, b.author, b.book_title, b.date_published 
+HAVING COUNT(DISTINCT t.tag_name) >= ?
+ORDER BY avg_score DESC, b.date_published 
+LIMIT ?
+OFFSET ?;`,
+                ['%' + likeString + '%', tagArray, tagArray.length, numPerPage, (numOfPage * numPerPage)],
+                (error, result) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                });
+        });
+    }
+
     async create(book) {
         return new Promise((resolve, reject) => {
             connectionPool.query('INSERT INTO book VALUES (NULL, ?, ?, NOW());',

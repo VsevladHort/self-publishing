@@ -49,6 +49,12 @@ app.get("/", async function (req, res) {
     });
 });
 
+app.get("/search", async function (req, res) {
+    res.render("advanced_search_view.ejs", {
+        user: req.session.user,
+    });
+});
+
 app.use(bookRouter);
 app.use(chapterRouter);
 app.use(profileRouter);
