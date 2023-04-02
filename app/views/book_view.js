@@ -6,6 +6,7 @@ const chapterList = document.getElementById("chapter_list");
 const id_book = document.getElementById("id_book").value;
 const add_btn = document.getElementById("add_btn");
 const publish_review = document.getElementById("publish_review");
+const bookTagsAnchor = document.getElementById("bookTagsAnchor");
 const star1 = document.getElementById("star1");
 const star2 = document.getElementById("star2");
 const star3 = document.getElementById("star3");
@@ -22,6 +23,7 @@ if (chapterList.innerHTML === '') {
     next.classList.add('d-none');
 }
 
+getBookTags().then(r => drawBookTags(r))
 getReviews(id_book, pageReviews).then((res) => {
     drawReviews(res);
 }).catch((err) => {
@@ -302,4 +304,40 @@ function getReviews(id, page) {
             }
             return response.json();
         });
+}
+
+function getBookTags() {
+    return fetch(`/book/${id_book}/tags`)
+        .then(function (response) {
+            if (!response.ok) {
+                return response.text().then(function (text) {
+                    throw new Error('Error loading document: ' + text);
+                });
+            }
+            return response.json();
+        });
+}
+
+function drawBookTags(res) {
+    bookTagsAnchor.innerHTML = "";
+    console.log(res);
+    res.forEach(function (tag) {
+        const span = document.createElement('span');
+        span.classList.toggle('badge')
+        span.classList.toggle('bg-secondary')
+        span.classList.toggle('me-1')
+        span.textContent = tag.tag_name
+        span.addEventListener('click', () => {
+            removeTag(tag.id_tag).then((r) => {
+                    message.style.display = 'block';
+                    messageSpan.textContent = r.msg;
+                    getBookTags().then(r => drawBookTags(r))
+                }
+            ).catch((r) => {
+                message.style.display = 'block';
+                messageSpan.textContent = r;
+            })
+        })
+        bookTagsAnchor.appendChild(span)
+    });
 }

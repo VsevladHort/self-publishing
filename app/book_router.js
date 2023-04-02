@@ -159,7 +159,7 @@ app.get('/book/:id/edit', auth.requireAuthorship, async (req, res) => {
     }
 });
 
-app.get('/book/:id/tags', auth.requireAuthorshipJsonResponse, async (req, res) => {
+app.get('/book/:id/tags', async (req, res) => {
     if (isNaN(req.params.id)) {
         res.status(404).send();
         return;
