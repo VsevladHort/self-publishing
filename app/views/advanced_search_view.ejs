@@ -42,13 +42,39 @@
     </div>
 </div>
 
+
+<div class="container mt-5">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
+        <tbody id="bookAnchor">
+
+        </tbody>
+    </table>
+    <button class="btn btn-primary" id="prev">Previous page</button>
+    <button class="btn btn-primary" id="next">Next page</button>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 <%- include('shared/alert_js.ejs') %>
 <script>
     const searchTagsAnchor = document.getElementById("searchTagsAnchor");
+    const bookAnchor = document.getElementById("bookAnchor");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const title = document.getElementById("title");
+    const search = document.getElementById("search");
+    let page = 1;
     const tagsToSearchWith = []
+    let tagsToSearchWithDefiniteCopy = []
+    let titleDefiniteCopy = ""
 
     getAllTags().then(r => {
         console.log(r)
@@ -60,6 +86,12 @@
         });
         document.getElementById("tags").innerHTML = innerHtml;
     })
+
+    queryBooks().then(r => {
+        drawBooks(r)
+    })
+
+    prev.classList.add('d-none');
 
     function drawBookTags(res) {
         searchTagsAnchor.innerHTML = "";
@@ -82,8 +114,49 @@
         });
     }
 
+    function drawBooks(res) {
+        bookAnchor.innerHTML = "";
+        console.log(res);
+        res.forEach(function (book) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+             <td><a href="/book/${book.id_book}">${book.book_title}</a></td>
+                <td>${book.author}</td>
+                <td>${book.avg_score}</td>
+            `;
+            bookAnchor.appendChild(tr)
+            console.log("Drew books")
+        });
+    }
+
+    search.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            page = 1;
+            titleDefiniteCopy = title.value;
+            tagsToSearchWithDefiniteCopy = tagsToSearchWith;
+            const result = await queryBooks();
+            drawBooks(result);
+        } catch (err) {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        }
+    });
+
     function getAllTags() {
         return fetch(`/tags`)
+            .then(function (response) {
+                if (!response.ok) {
+                    return response.text().then(function (text) {
+                        throw new Error('Error loading document: ' + text);
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function queryBooks() {
+        return fetch(`/query?page=${page}&title=${titleDefiniteCopy}&tags=${JSON.stringify(tagsToSearchWithDefiniteCopy)}`)
             .then(function (response) {
                 if (!response.ok) {
                     return response.text().then(function (text) {
@@ -101,6 +174,37 @@
             tagsToSearchWith.push(tag);
         drawBookTags(tagsToSearchWith)
     }
+
+    if (next !== null)
+        next.addEventListener('click', async () => {
+            page++;
+            queryBooks().then((res) => {
+                drawBooks(res);
+                if (res.length === 0) {
+                    next.classList.add('d-none');
+                }
+                if (prev.classList.contains('d-none'))
+                    prev.classList.remove('d-none');
+            }).catch((err) => {
+                message.style.display = 'block';
+                messageSpan.textContent = err;
+            });
+        });
+
+    prev.addEventListener('click', async () => {
+        page -= 1;
+        queryBooks().then((res) => {
+            drawBooks(res);
+            if (page === 1) {
+                prev.classList.add('d-none');
+            }
+            if (next.classList.contains('d-none'))
+                next.classList.remove('d-none');
+        }).catch((err) => {
+            message.style.display = 'block';
+            messageSpan.textContent = err;
+        });
+    });
 </script>
 </body>
 </html>

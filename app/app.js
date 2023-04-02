@@ -55,6 +55,10 @@ app.get("/search", async function (req, res) {
     });
 });
 
+app.get("/query", async function (req, res) {
+    return bookService.findBooksByTags(req, res);
+});
+
 app.use(bookRouter);
 app.use(chapterRouter);
 app.use(profileRouter);

@@ -154,6 +154,24 @@ async function deleteTagFromBook(req, res) {
     }
 }
 
+async function findBooksByTags(req, res) {
+    let page = parseInt(req.query.page);
+    let tags = JSON.parse(req.query.tags);
+    let title = req.query.title;
+    if (typeof tags === "undefined" || tags === null)
+        tags = [];
+    if (typeof title === "undefined" || title === null)
+        title = "";
+    if (!page || page <= 0)
+        page = 1;
+    let result = [];
+    if (tags.length === 0)
+        result = await bookDAO.getAllOrderedByAvgScoreThenDateWithPaginationWhereTitleIsLike(10, page, title)
+    else
+        result = await bookDAO.getAllOrderedByAvgScoreThenDateWithPaginationWhereTitleIsLikeAndHasTags(10, page, title, tags)
+    res.send(result);
+}
+
 module.exports = {
     publish,
     getAllForHomePage,
@@ -168,5 +186,6 @@ module.exports = {
     getAllTags,
     getAllBookTags,
     addTagToBook,
-    deleteTagFromBook
+    deleteTagFromBook,
+    findBooksByTags
 }

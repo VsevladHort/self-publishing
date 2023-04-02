@@ -177,7 +177,7 @@ ON b.id_book = r.id_book
 LEFT OUTER JOIN book_tags ON b.id_book = book_tags.id_book
 LEFT OUTER JOIN tag t ON book_tags.id_tag = t.id_tag
 WHERE b.book_title LIKE ? 
-AND t.tag_name IN (${placeholders})
+AND t.tag_name IN (?)
 GROUP BY b.id_book, b.author, b.book_title, b.date_published 
 HAVING COUNT(DISTINCT t.tag_name) >= ?
 ORDER BY avg_score DESC, b.date_published 
